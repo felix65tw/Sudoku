@@ -40,7 +40,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* 防止容器內滾動 *
+            overflow: hidden; /* 禁止頁面滾動 */
         }
 
         /* 主容器 - 限制最大宽度为九宫格宽度 */
@@ -50,7 +50,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px; /* 减小间距 */
-            overflow: hidden; /* 防止容器內滾動 *
+            overflow: hidden; /* 防止容器內滾動 */
         }
 
         /* 顶部控制栏 - 功能按钮 */
@@ -105,10 +105,10 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.7rem; /* 与笔记字体大小相同 */
-            padding: 0px 0; /* 减小上下行距 */
-            margin-bottom: 0px; /* 添加底部间距，与九宫格保持5px距离 */
-            margin-top: 15px; /* 增加與上方功能鍵的間距 */
-            line-height: 0.1; /* 最小化行高 */
+            padding: 0; /* 移除所有内边距 */
+            margin: 0; /* 移除所有外边距 */
+            line-height: 0.1; /* 进一步最小化行高，达到几乎无距离 */
+            margin-top: 15px; /* 增加与上方功能键的间距 */
         }
 
         .timer {
