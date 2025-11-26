@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数独游戏</title>
+    <style>
+        /* CSS变量定义，便于主题管理和统一风格 */
+        :root {
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --primary: #3498db;
+            --primary-light: #5dade2;
+            --success: #2ecc71;
+            --success-light: #58d68d;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --highlight: #e8f4fd;
+            --border: #bdc3c7;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --disabled: #95a5a6;
+        }
+
+        /* 全局样式重置 */
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation; /* 优化移动端触摸体验 */
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 主容器 - 限制最大宽度为九宫格宽度 */
+        .game-container {
+            width: 100%;
+            max-width: 400px; /* 限制最大宽度为九宫格宽度 */
+            display: flex;
+            flex-direction: column;
+            gap: 6px; /* 减小间距 */
+        }
+
+        /* 顶部控制栏 - 功能按钮 */
+        .controls-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* 基础按钮样式 */
+        .btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 主要按钮样式 - 用于新游戏按钮 */
+        .btn-primary {
+            background-color: var(--primary);
+        }
+
+        /* 次要按钮样式 - 用于默认状态的功能按钮 */
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border);
+        }
+
+        /* 开启状态按钮样式 - 用于笔记和音效开启状态 */
+        .btn-on {
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* 状态栏 - 计时器和统计信息 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem; /* 与笔记字体大小相同 */
+            padding: 0px 0; /* 减小上下行距 */
+            margin-bottom: 0px; /* 添加底部间距，与九宫格保持5px距离 */
+            margin-top: 15px; /* 增加與上方功能鍵的間距 */
+            line-height: 0.1; /* 最小化行高 */
+        }
+
+        .timer {
+            font-weight: 700;
+            font-family: monospace; /* 使用等宽字体，确保数字对齐 */
+            color: var(--primary);
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-family: monospace; /* 使用等宽字体，确保数字对齐 */
+            min-width: 20px; /* 预留两位数字空间 */
+            text-align: center;
+        }
+
+        /* 数独棋盘样式 */
+        #sudoku-board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: var(--border);
+            border: 2px solid var(--border);
+            gap: 1px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        /* 数独单元格样式 */
+        .cell {
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem; /* 增大九宫格内数字 */
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            user-select: none; /* 防止文本选择 */
+        }
+
+        /* 初始线索数字样式 - 所有数字都使用这个颜色 */
+        .cell.clue, .cell.filled {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* 3x3宫格边框增强 */
+        .cell.border-right { border-right: 2px solid var(--border); } 
+        .cell.border-bottom { border-bottom: 2px solid var(--border); } 
+
+        /* 高亮相关单元格（同一行、列和宫格） */
+        .cell.highlight-related { background-color: var(--highlight); } 
+        /* 选中的单元格高亮 */
+        .cell.selected { background-color: rgba(52, 152, 219, 0.2) !important; } 
+        /* 相同数字高亮 */
+        .cell.highlight-same { background-color: rgba(52, 152, 219, 0.3) !important; }
+        /* 错误数字样式 */
+        .cell.error { color: var(--danger); }
+
+        /* 笔记网格样式 - 用于显示候选数字 */
+        .notes-grid {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            grid-template-rows: repeat(3, 1fr);
+            pointer-events: none; /* 防止笔记网格干扰单元格点击 */
+            padding: 1px;
+        }
+
+        /* 单个笔记数字样式 */
+        .note-num {
+            font-size: 0.7rem; /* 笔记字体 */
+            color: var(--text-secondary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            line-height: 1;
+            font-weight: 500;
+        }
+
+        /* 高亮笔记中的相同数字 */
+        .note-num.highlighted {
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        /* 数字键盘样式 */
+        .keypad {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+
+        /* 数字按钮样式 */
+        .numpad-btn {
+            flex: 1;
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numpad-btn:active {
+            transform: scale(0.95);
+        }
+
+        .numpad-btn .num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .numpad-btn .count {
+            font-size: 0.6rem; /* 减小字体 */
+            color: var(--text-secondary);
+            margin-top: 1px; /* 减小行距 */
+            line-height: 1; /* 减小行距 */
+        }
+
+        /* 已完成的数字按钮变淡 */
+        .numpad-btn.faded {
+            opacity: 0.4;
+        }
+
+        /* 建议数字突出显示 */
+        .numpad-btn.suggested {
+            border: 2px solid var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(243, 156, 18, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+        }
+
+        /* 遮罩层样式 - 用于胜利界面 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* 模态对话框样式 */
+        .modal {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 90%;
+            width: 300px;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* 错误输入动画 */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
+            100% { transform: translateX(0); }
+        }
+
+        .cell.error .main-num {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* 提示动画 */
+        @keyframes text-flash {
+            0%, 100% { color: var(--primary); transform: scale(1); }
+            50% { color: #f39c12; transform: scale(1.2); }
+        }
+
+        .cell.hinting .main-num {
+            animation: text-flash 0.6s ease-in-out 3;
+        }
+
+        /* 响应式设计 - 针对小屏幕设备优化 */
+        @media (max-width: 480px) {
+            .controls-top {
+                gap: 4px;
+            }
+            
+            .btn {
+                padding: 5px 8px;
+                font-size: 0.8rem;
+            }
+            
+            .cell {
+                font-size: 1.4rem;
+            }
+            
+            .numpad-btn .num {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 - 限制最大宽度为九宫格宽度 -->
+    <div class="game-container">
+        <!-- 顶部控制栏 - 功能按钮 -->
+        <div class="controls-top">
+            <!-- 难易选择 -->
+            <select class="btn btn-secondary" id="difficulty">
+                <option value="Beginner">入門</option>
+                <option value="Easy" selected>簡單</option>
+                <option value="Medium">中等</option>
+                <option value="Hard">困難</option>
+                <option value="Expert">專家</option>
+            </select>
+            
+            <!-- 新游戏 -->
+            <button class="btn btn-primary" id="btn-new-game">新遊戲</button>
+            
+            <!-- 笔记 -->
+            <button class="btn btn-secondary" id="btn-notes">筆記</button>
+            
+            <!-- 提示 -->
+            <button class="btn btn-secondary" id="btn-hint">提示</button>
+            
+            <!-- 音效 -->
+            <button class="btn btn-on" id="btn-sound">音效</button>
+        </div>
+        
+        <!-- 状态栏 - 计时器和统计信息 -->
+        <div class="status-bar">
+            <!-- 计时器 -->
+            <div class="timer" id="timer-display">00:00</div>
+            
+            <!-- 统计信息 -->
+            <div class="stats">
+                <div class="stat-item">
+                    <span>錯誤:</span>
+                    <span class="stat-value" id="error-stat">00</span>
+                </div>
+                <div class="stat-item">
+                    <span>提示:</span>
+                    <span class="stat-value" id="hint-stat">00</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数独棋盘 -->
+        <div id="sudoku-board"></div>
+        
+        <!-- 数字键盘 -->
+        <div class="keypad" id="keypad"></div>
+    </div>
+
+    <!-- 胜利界面遮罩 -->
+    <div class="overlay" id="victory-overlay">
+        <div class="modal">
+            <h2>🎉 恭喜完成！</h2>
+            <p id="victory-time-text">耗時：00:00</p>
+            <p id="victory-stats">錯誤: 00, 提示: 00</p>
+            <button class="btn btn-primary" onclick="closeOverlay()">確定</button>
+        </div>
+    </div>
+
+    <script>
+        // ======================================================================
+        // 遊戲狀態變數定義
+        // ======================================================================
+
+        // 數獨相關數據
+        let board = [];          // 當前遊戲盤面（包含玩家輸入的數字）
+        let solution = [];       // 完整解答
+        let initial = [];        // 初始盤面（只包含預設的線索數字）
+        let selectedCell = null; // 當前選中的單元格座標 {r, c}
+
+        // 遊戲功能狀態
+        let notesEnabled = false; // 筆記模式是否啟用
+        let soundEnabled = true;  // 音效是否啟用
+        let gameOver = false;     // 遊戲是否結束
+        let isPaused = false;     // 遊戲是否暫停
+
+        // 數字統計
+        let counts = Array(10).fill(9); // 每個數字還需要填寫的數量（索引1-9對應數字1-9）
+
+        // 計時器相關
+        let timerInterval = null; // 計時器間隔ID
+        let timeElapsed = 0;      // 已耗費的時間（秒）
+
+        // 遊戲統計
+        let errorCount = 0; // 錯誤次數
+        let hintCount = 0;  // 提示使用次數
+
+        // ======================================================================
+        // 音效系統
+        // ======================================================================
+
+        // 使用Web Audio API創建音效上下文
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        /**
+         * 初始化音頻上下文
+         * 由於瀏覽器自動播放策略，需要在用戶交互後才能創建音頻上下文
+         */
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        /**
+         * 播放指定類型的音效
+         * @param {string} type - 音效類型：'correct', 'error', 'hint', 'ui', 'win'
+         * 每種音效使用不同的振盪器類型和頻率來產生不同的聲音效果
+         */
+        function playSound(type) {
+            // 如果音效關閉，直接返回
+            if (!soundEnabled) return;
+            
+            // 確保音頻上下文已初始化
+            if (!audioCtx) initAudio();
+            
+            // 如果音頻上下文被暫停，恢復它（瀏覽器自動播放策略）
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // 根據不同音效類型設置不同的音頻參數
+            switch (type) {
+                case 'correct': // 正確答案音效 - 簡短的高頻音
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1000, now);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                    break;
+                case 'error': // 錯誤答案音效 - 低沉的下降音
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                    break;
+                case 'hint': // 提示音效 - 上升的三角波
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.1, now);
+                    gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                    break;
+                case 'ui': // UI交互音效 - 短促的方波
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, now);
+                    gainNode.gain.setValueAtTime(0.05, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                    break;
+                case 'win': // 勝利音效 - 三個音符的組合
+                    playNote(523.25, now, 0.2); // C5
+                    playNote(659.25, now + 0.15, 0.2); // E5
+                    playNote(783.99, now + 0.3, 0.4); // G5
+                    break;
+            }
+        }
+
+        /**
+         * 播放單個音符
+         * @param {number} freq - 頻率（Hz）
+         * @param {number} time - 開始時間
+         * @param {number} duration - 持續時間（秒）
+         */
+        function playNote(freq, time, duration) {
+            if (!audioCtx) initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, time);
+            gain.gain.setValueAtTime(0.1, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+            osc.start(time);
+            osc.stop(time + duration);
+        }
+
+        // ======================================================================
+        // 初始化與事件監聽設置
+        // ======================================================================
+
+        /**
+         * DOM內容加載完成後初始化遊戲
+         * 這是整個遊戲的入口點，設置了所有必要的初始狀態
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            createBoardHTML(); // 創建數獨棋盤HTML結構
+            createKeypadHTML(); // 創建數字鍵盤HTML結構
+            startNewGame(); // 開始新遊戲
+            setupEventListeners(); // 設置事件監聽器
+        });
+
+        /**
+         * 設置所有事件監聽器
+         * 為所有用戶交互元素綁定對應的事件處理函數
+         */
+        function setupEventListeners() {
+            // 新遊戲按鈕 - 點擊時開始新遊戲
+            document.getElementById('btn-new-game').addEventListener('click', () => {
+                playSound('ui');
+                startNewGame();
+            });
+            
+            // 筆記模式切換按鈕 - 點擊時切換筆記模式
+            document.getElementById('btn-notes').addEventListener('click', () => {
+                playSound('ui');
+                toggleNotes();
+            });
+            
+            // 提示按鈕 - 點擊時使用提示功能
+            document.getElementById('btn-hint').addEventListener('click', () => {
+                useHint();
+            });
+            
+            // 音效切換按鈕 - 點擊時切換音效開關
+            document.getElementById('btn-sound').addEventListener('click', () => {
+                playSound('ui');
+                toggleSound();
+            });
+            
+            // 難度選擇下拉菜單 - 改變時開始新遊戲
+            document.getElementById('difficulty').addEventListener('change', () => {
+                playSound('ui');
+                startNewGame();
+            });
+        }
+
+        // ======================================================================
+        // 遊戲核心功能
+        // ======================================================================
+
+        /**
+         * 開始新遊戲
+         * 重置所有遊戲狀態並生成新的數獨謎題
+         */
+        function startNewGame() {
+            // 如果遊戲暫停，先取消暫停
+            if (isPaused) togglePause();
+            
+            // 獲取選中的難度
+            const diff = document.getElementById('difficulty').value;
+            
+            // 生成新的數獨遊戲
+            generateSudoku(diff);
+            
+            // 重置遊戲狀態
+            gameOver = false;
+            selectedCell = null;
+            errorCount = 0;
+            hintCount = 0;
+            
+            // 更新UI
+            updateStats();
+            updateBoardUI();
+            updateCounts();
+            updateHighlighting();
+            
+            // 開始計時
+            startTimer();
+        }
+
+        /**
+         * 創建數獨棋盤的HTML結構
+         * 使用9x9網格佈局，並添加3x3宮格的粗邊框
+         * 每個單元格包含主數字顯示區域和筆記網格
+         */
+        function createBoardHTML() {
+            const boardEl = document.getElementById('sudoku-board');
+            boardEl.innerHTML = ''; // 清空現有內容
+            
+            // 創建9x9網格
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.r = r; // 存儲行索引，用於後續識別單元格位置
+                    cell.dataset.c = c; // 存儲列索引，用於後續識別單元格位置
+                    
+                    // 添加3x3宮格的粗邊框，增強視覺結構
+                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right');
+                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom');
+                    
+                    // 創建筆記網格（用於顯示候選數字）
+                    const notesDiv = document.createElement('div');
+                    notesDiv.className = 'notes-grid';
+                    for(let i = 1; i <= 9; i++) {
+                        const note = document.createElement('div');
+                        note.className = 'note-num';
+                        note.dataset.num = i; // 存儲數字值，用於後續識別和操作
+                        notesDiv.appendChild(note);
+                    }
+                    cell.appendChild(notesDiv);
+                    
+                    // 創建主數字顯示區域
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'main-num';
+                    cell.appendChild(numSpan);
+                    
+                    // 添加點擊事件 - 點擊時選擇該單元格
+                    cell.addEventListener('click', () => selectCell(r, c));
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+
+        /**
+         * 創建數字鍵盤的HTML結構
+         * 包含1-9的數字按鈕，用於玩家輸入數字
+         */
+        function createKeypadHTML() {
+            const keypad = document.getElementById('keypad');
+            keypad.innerHTML = '';
+            
+            // 創建1-9的數字按鈕
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.createElement('div');
+                btn.className = 'numpad-btn';
+                btn.id = `btn-num-${i}`;
+                btn.innerHTML = `<div class="num">${i}</div><div class="count">9</div>`;
+                btn.addEventListener('click', () => handleInput(i));
+                keypad.appendChild(btn);
+            }
+        }
+
+        /**
+         * 選擇單元格
+         * @param {number} r - 行索引
+         * @param {number} c - 列索引
+         * 當玩家點擊單元格時，將其設置為當前選中狀態並更新高亮顯示
+         */
+        function selectCell(r, c) {
+            // 如果遊戲結束或暫停，不處理選擇
+            if (gameOver || isPaused) return;
+            
+            // 設置當前選中的單元格
+            selectedCell = { r, c };
+            
+            // 更新高亮顯示
+            updateHighlighting();
+            
+            // 播放UI音效
+            playSound('ui');
+        }
+
+        /**
+         * 處理數字輸入
+         * @param {number} num - 輸入的數字（1-9）
+         * 根據當前選中的單元格和輸入的數字，更新遊戲狀態
+         */
+        function handleInput(num) {
+            // 如果遊戲結束、沒有選中單元格或遊戲暫停，不處理輸入
+            if (gameOver || !selectedCell || isPaused) return;
+            
+            const { r, c } = selectedCell;
+            
+            // 如果單元格是初始線索或已經正確填寫，不允許修改
+            if (initial[r][c] !== 0 || (board[r][c] !== 0 && board[r][c] === solution[r][c])) return;
+            
+            const cellDiv = getCellDiv(r, c);
+            
+            // 檢查答案是否正確
+            if (num === solution[r][c]) {
+                // 正確答案
+                board[r][c] = num;
+                playSound('correct');
+                updateBoardUI();
+                updateCounts();
+                updateHighlighting();
+                checkWin(); // 檢查是否完成遊戲
+            } else {
+                // 錯誤答案
+                playSound('error');
+                errorCount++;
+                updateStats();
+                
+                // 顯示錯誤動畫
+                cellDiv.querySelector('.main-num').innerText = num;
+                cellDiv.classList.add('error');
+                cellDiv.classList.add('filled');
+                
+                // 500毫秒後恢復正常顯示
+                setTimeout(() => {
+                    cellDiv.classList.remove('error');
+                    cellDiv.querySelector('.main-num').innerText = board[r][c] === 0 ? '' : board[r][c];
+                    cellDiv.classList.remove('filled');
+                    if (notesEnabled) updateNotes();
+                }, 500);
+            }
+        }
+
+        /**
+         * 更新統計顯示
+         * 更新錯誤次數和提示使用次數的顯示
+         */
+        function updateStats() {
+            // 使用padStart确保两位数显示
+            document.getElementById('error-stat').innerText = errorCount.toString().padStart(2, '0');
+            document.getElementById('hint-stat').innerText = hintCount.toString().padStart(2, '0');
+        }
+
+        /**
+         * 開始計時器
+         * 初始化計時器並每秒更新時間顯示
+         */
+        function startTimer() {
+            stopTimer(); // 停止現有計時器
+            timeElapsed = 0;
+            isPaused = false;
+            updateTimerDisplay();
+            
+            // 每秒更新一次時間顯示
+            timerInterval = setInterval(() => {
+                if (!isPaused && !gameOver) {
+                    timeElapsed++;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        /**
+         * 停止計時器
+         * 清除計時器間隔，停止計時
+         */
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        /**
+         * 更新時間顯示
+         * 將秒數轉換為分:秒格式並更新顯示
+         * @returns {string} 格式化後的時間字符串
+         */
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            const text = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = text;
+            return text;
+        }
+
+        // ======================================================================
+        // 數獨生成與驗證算法
+        // ======================================================================
+
+        /**
+         * 根據難度生成數獨遊戲
+         * @param {string} difficulty - 難度級別：'Beginner', 'Easy', 'Medium', 'Hard', 'Expert'
+         * 使用回溯算法生成完整解答，然後根據難度移除一定數量的數字
+         */
+        function generateSudoku(difficulty) {
+            // 初始化空白盤面
+            board = Array.from({ length: 9 }, () => Array(9).fill(0));
+            
+            // 先填充對角線的三個3x3宮格（這樣可以確保不衝突）
+            fillDiagonal();
+            
+            // 使用回溯算法解決完整的數獨
+            solveSudoku(board);
+            
+            // 保存完整解答
+            solution = JSON.parse(JSON.stringify(board));
+            
+            // 根據難度決定移除多少數字（數字越少難度越高）
+            let attempts = 0;
+            switch(difficulty) {
+                case 'Beginner': attempts = 20; break; // 入門 - 移除20個數字
+                case 'Easy': attempts = 30; break;     // 簡單 - 移除30個數字
+                case 'Medium': attempts = 40; break;   // 中等 - 移除40個數字
+                case 'Hard': attempts = 50; break;     // 困難 - 移除50個數字
+                case 'Expert': attempts = 58; break;   // 專家 - 移除58個數字
+            }
+            
+            // 保存初始盤面（包含線索數字）
+            initial = JSON.parse(JSON.stringify(solution));
+            
+            // 重置玩家盤面
+            board = Array.from({ length: 9 }, () => Array(9).fill(0));
+            
+            // 隨機移除指定數量的數字
+            let removed = 0;
+            while (removed < attempts) {
+                let row = Math.floor(Math.random() * 9);
+                let col = Math.floor(Math.random() * 9);
+                
+                // 如果該位置有數字，移除它
+                if (initial[row][col] !== 0) {
+                    initial[row][col] = 0;
+                    removed++;
+                }
+            }
+        }
+
+        /**
+         * 填充對角線的三個3x3宮格
+         * 這三個宮格互不影響，可以獨立填充，確保初始狀態有效
+         */
+        function fillDiagonal() {
+            for (let i = 0; i < 9; i += 3) {
+                fillBox(i, i);
+            }
+        }
+
+        /**
+         * 填充指定的3x3宮格
+         * @param {number} row - 宮格起始行
+         * @param {number} col - 宮格起始列
+         * 隨機生成數字填充3x3宮格，確保宮格內數字不重複
+         */
+        function fillBox(row, col) {
+            let num;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    // 隨機生成數字，直到找到一個可用的
+                    do {
+                        num = Math.floor(Math.random() * 9) + 1;
+                    } while (!isSafeInBox(row, col, num));
+                    
+                    board[row + i][col + j] = num;
+                }
+            }
+        }
+
+        /**
+         * 檢查數字在指定3x3宮格中是否安全（不重複）
+         * @param {number} rowStart - 宮格起始行
+         * @param {number} colStart - 宮格起始列
+         * @param {number} num - 要檢查的數字
+         * @returns {boolean} 是否安全
+         */
+        function isSafeInBox(rowStart, colStart, num) {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[rowStart + i][colStart + j] === num) return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * 使用回溯算法解決數獨
+         * @param {Array} grid - 數獨盤面
+         * @returns {boolean} 是否成功解決
+         * 這是經典的回溯算法實現，用於生成數獨解答
+         */
+        function solveSudoku(grid) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    // 找到空白單元格
+                    if (grid[row][col] === 0) {
+                        // 嘗試1-9的數字
+                        for (let num = 1; num <= 9; num++) {
+                            // 檢查數字是否安全
+                            if (isSafe(grid, row, col, num)) {
+                                // 放置數字
+                                grid[row][col] = num;
+                                
+                                // 遞歸嘗試解決剩下的盤面
+                                if (solveSudoku(grid)) return true;
+                                
+                                // 如果遞歸失敗，回溯（重置單元格）
+                                grid[row][col] = 0;
+                            }
+                        }
+                        // 如果所有數字都嘗試過但都不行，返回失敗
+                        return false;
+                    }
+                }
+            }
+            // 所有單元格都已填滿，解決成功
+            return true;
+        }
+
+        /**
+         * 檢查數字在指定位置是否安全
+         * @param {Array} grid - 數獨盤面
+         * @param {number} row - 行索引
+         * @param {number} col - 列索引
+         * @param {number} num - 要檢查的數字
+         * @returns {boolean} 是否安全
+         * 檢查行、列和3x3宮格中是否有重複數字
+         */
+        function isSafe(grid, row, col, num) {
+            // 檢查行和列
+            for (let x = 0; x < 9; x++) {
+                if (grid[row][x] === num || grid[x][col] === num) return false;
+            }
+            
+            // 檢查3x3宮格
+            let startRow = row - row % 3;
+            let startCol = col - col % 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (grid[i + startRow][j + startCol] === num) return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * 使用提示功能（自動填入一個正確數字）
+         * 隨機選擇一個空白單元格並填入正確答案
+         */
+        function useHint() {
+            // 如果遊戲結束或暫停，不提供提示
+            if (gameOver || isPaused) return;
+            
+            // 收集所有空白單元格
+            const emptyCells = [];
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (board[r][c] === 0 && initial[r][c] === 0) {
+                        emptyCells.push({r, c});
+                    }
+                }
+            }
+            
+            // 如果沒有空白單元格，直接返回
+            if (emptyCells.length === 0) return;
+            
+            // 增加提示計數並更新顯示
+            hintCount++;
+            updateStats();
+            
+            // 隨機選擇一個空白單元格
+            const { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            
+            // 填入正確答案
+            board[r][c] = solution[r][c];
+            updateBoardUI();
+            
+            // 添加提示動畫效果
+            const cellDiv = getCellDiv(r, c);
+            cellDiv.classList.add('hinting');
+            setTimeout(() => {
+                if (cellDiv) cellDiv.classList.remove('hinting');
+            }, 2000);
+            
+            // 播放提示音效
+            playSound('hint');
+            
+            // 更新UI
+            updateCounts();
+            updateHighlighting();
+            
+            // 檢查是否完成遊戲
+            checkWin();
+        }
+
+        /**
+         * 獲取指定單元格的DOM元素
+         * @param {number} r - 行索引
+         * @param {number} c - 列索引
+         * @returns {HTMLElement} 單元格DOM元素
+         */
+        function getCellDiv(r, c) {
+            return document.querySelector(`.cell[data-r='${r}'][data-c='${c}']`);
+        }
+
+        /**
+         * 更新數獨盤面UI
+         * 根據當前遊戲狀態更新所有單元格的顯示
+         */
+        function updateBoardUI() {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = getCellDiv(r, c);
+                    
+                    // 獲取單元格的值（玩家輸入或初始線索）
+                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+                    
+                    // 更新主數字顯示
+                    cell.querySelector('.main-num').innerText = val === 0 ? '' : val;
+                    
+                    // 重置單元格類
+                    cell.className = 'cell';
+                    
+                    // 添加3x3宮格邊框
+                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right');
+                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom');
+                    
+                    // 設置單元格類型
+                    if (initial[r][c] !== 0) {
+                        cell.classList.add('clue'); // 初始線索
+                    } else if (board[r][c] !== 0) {
+                        cell.classList.add('filled'); // 玩家填寫的數字
+                    }
+                }
+            }
+            
+            // 如果筆記模式啟用，更新筆記顯示
+            if (notesEnabled) updateNotes();
+            else clearNotes();
+        }
+
+        /**
+         * 切換筆記模式
+         * 筆記模式允許玩家在單元格中標記候選數字
+         */
+        function toggleNotes() {
+            if (isPaused) return;
+            
+            // 切換筆記模式狀態
+            notesEnabled = !notesEnabled;
+            
+            // 更新按鈕顏色
+            const notesBtn = document.getElementById('btn-notes');
+            if (notesEnabled) {
+                notesBtn.classList.add('btn-on');
+                notesBtn.classList.remove('btn-secondary');
+            } else {
+                notesBtn.classList.remove('btn-on');
+                notesBtn.classList.add('btn-secondary');
+            }
+            
+            // 更新筆記顯示
+            if (notesEnabled) updateNotes();
+            else clearNotes();
+            
+            // 更新高亮顯示
+            updateHighlighting();
+        }
+
+        /**
+         * 清除所有筆記
+         * 清空所有單元格中的候選數字顯示
+         */
+        function clearNotes() {
+            document.querySelectorAll('.note-num').forEach(el => el.innerText = '');
+        }
+
+        /**
+         * 更新筆記顯示
+         * 顯示每個空白單元格中可能的候選數字
+         * 候選數字是根據當前盤面狀態計算得出的可能正確的數字
+         */
+        function updateNotes() {
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = getCellDiv(r, c);
+                    const noteContainer = cell.querySelector('.notes-grid');
+                    
+                    // 清空現有筆記
+                    noteContainer.querySelectorAll('.note-num').forEach(n => n.innerText = '');
+                    
+                    // 如果是空白單元格，計算並顯示候選數字
+                    if (board[r][c] === 0 && initial[r][c] === 0) {
+                        // 合併初始盤面和玩家輸入，用於檢查候選數字
+                        let combinedGrid = JSON.parse(JSON.stringify(initial));
+                        for (let i = 0; i < 9; i++) {
+                            for (let j = 0; j < 9; j++) {
+                                if (board[i][j] !== 0) combinedGrid[i][j] = board[i][j];
+                            }
+                        }
+                        
+                        // 檢查每個數字是否可安全填入
+                        for (let n = 1; n <= 9; n++) {
+                            if (isSafe(combinedGrid, r, c, n)) {
+                                noteContainer.querySelector(`.note-num[data-num='${n}']`).innerText = n;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * 更新高亮顯示
+         * 高亮相關單元格（同一行、列和宮格）和相同數字
+         * 當選中一個單元格時，突出顯示所有相關單元格和相同數字的單元格
+         */
+        function updateHighlighting() {
+            // 清除所有高亮
+            document.querySelectorAll('.cell').forEach(c => {
+                c.classList.remove('selected', 'highlight-related', 'highlight-same');
+            });
+            
+            document.querySelectorAll('.note-num').forEach(n => {
+                n.classList.remove('highlighted');
+            });
+            
+            document.querySelectorAll('.numpad-btn').forEach(b => {
+                b.classList.remove('suggested');
+            });
+            
+            // 如果沒有選中單元格，直接返回
+            if (!selectedCell) return;
+            
+            const { r, c } = selectedCell;
+            
+            // 獲取當前選中單元格的值
+            const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+            
+            // 計算當前單元格所在的3x3宮格起始位置
+            const startRow = r - r % 3;
+            const startCol = c - c % 3;
+            
+            // 高亮同一行和同一列的單元格
+            for (let i = 0; i < 9; i++) {
+                getCellDiv(r, i).classList.add('highlight-related');
+                getCellDiv(i, c).classList.add('highlight-related');
+            }
+            
+            // 高亮同一3x3宮格的單元格
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    getCellDiv(startRow + i, startCol + j).classList.add('highlight-related');
+                }
+            }
+            
+            // 高亮選中的單元格
+            getCellDiv(r, c).classList.add('selected');
+            
+            // 如果選中的單元格有數字，高亮所有相同數字的單元格
+            if (val !== 0) {
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        const cellVal = board[i][j] !== 0 ? board[i][j] : initial[i][j];
+                        if (cellVal === val) {
+                            getCellDiv(i, j).classList.add('highlight-same');
+                        }
+                    }
+                }
+                
+                // 如果筆記模式啟用，高亮筆記中的相同數字
+                if (notesEnabled) {
+                    document.querySelectorAll(`.note-num[data-num='${val}']`).forEach(noteEl => {
+                        if (noteEl.innerText === String(val)) {
+                            noteEl.classList.add('highlighted');
+                        }
+                    });
+                }
+            }
+            
+            // 僅在選中單元格為空白時檢查並突出顯示建議數字
+            if (board[r][c] === 0 && initial[r][c] === 0) {
+                checkGroupAndHighlight(r, c);
+            }
+        }
+
+        /**
+         * 檢查行、列或宮是否已填入8個數字，如果是則突出顯示答案
+         * 僅當選中單元格為空白且是唯一缺失的數字時才突出顯示
+         * @param {number} r - 行索引
+         * @param {number} c - 列索引
+         */
+        function checkGroupAndHighlight(r, c) {
+            // 檢查行
+            let rowValues = [];
+            for (let i = 0; i < 9; i++) {
+                const val = board[r][i] !== 0 ? board[r][i] : initial[r][i];
+                rowValues.push(val);
+            }
+            let rowMissing = findMissingNumber(rowValues);
+            if (rowMissing !== -1) {
+                highlightSuggestedNumber(rowMissing);
+                return;
+            }
+            
+            // 檢查列
+            let colValues = [];
+            for (let i = 0; i < 9; i++) {
+                const val = board[i][c] !== 0 ? board[i][c] : initial[i][c];
+                colValues.push(val);
+            }
+            let colMissing = findMissingNumber(colValues);
+            if (colMissing !== -1) {
+                highlightSuggestedNumber(colMissing);
+                return;
+            }
+            
+            // 檢查宮
+            let boxValues = [];
+            const startRow = r - r % 3;
+            const startCol = c - c % 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    const val = board[startRow + i][startCol + j] !== 0 ? 
+                                board[startRow + i][startCol + j] : 
+                                initial[startRow + i][startCol + j];
+                    boxValues.push(val);
+                }
+            }
+            let boxMissing = findMissingNumber(boxValues);
+            if (boxMissing !== -1) {
+                highlightSuggestedNumber(boxMissing);
+                return;
+            }
+        }
+
+        /**
+         * 在數字組中查找缺失的數字
+         * @param {Array} values - 數字組
+         * @returns {number} 缺失的數字，如果沒有或有多個缺失則返回-1
+         */
+        function findMissingNumber(values) {
+            let missing = 0;
+            let count = 0;
+            for (let i = 1; i <= 9; i++) {
+                if (!values.includes(i)) {
+                    missing = i;
+                    count++;
+                }
+            }
+            return count === 1 ? missing : -1;
+        }
+
+        /**
+         * 突出顯示建議的數字
+         * @param {number} num - 要突出顯示的數字
+         */
+        function highlightSuggestedNumber(num) {
+            const btn = document.getElementById(`btn-num-${num}`);
+            if (btn) {
+                btn.classList.add('suggested');
+            }
+        }
+
+        /**
+         * 更新數字統計
+         * 顯示每個數字還需要填寫的數量
+         * 當數字已完成時，將對應的數字按鈕變淡
+         */
+        function updateCounts() {
+            // 重置計數器
+            counts.fill(9);
+            
+            // 統計已填寫的數字
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+                    if (val !== 0) counts[val]--;
+                }
+            }
+            
+            // 更新數字鍵盤顯示
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`btn-num-${i}`);
+                btn.querySelector('.count').innerText = counts[i];
+                
+                // 如果數字已完成，將按鈕變淡
+                if (counts[i] <= 0) {
+                    btn.classList.add('faded');
+                } else {
+                    btn.classList.remove('faded');
+                }
+            }
+        }
+
+        /**
+         * 檢查遊戲是否完成
+         * 比較當前盤面與解答，如果完全相同則遊戲完成
+         */
+        function checkWin() {
+            let isFull = true;
+            
+            // 檢查每個單元格是否正確填寫
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cellVal = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+                    if (cellVal !== solution[r][c]) {
+                        isFull = false;
+                        break;
+                    }
+                }
+                if (!isFull) break;
+            }
+            
+            // 如果所有單元格都正確，顯示勝利界面
+            if (isFull) {
+                gameOver = true;
+                stopTimer();
+                playSound('win');
+                
+                // 更新勝利界面信息
+                document.getElementById('victory-time-text').innerText = `耗時：${updateTimerDisplay()}`;
+                document.getElementById('victory-stats').innerText = `錯誤: ${errorCount.toString().padStart(2, '0')}, 提示: ${hintCount.toString().padStart(2, '0')}`;
+                document.getElementById('victory-overlay').style.display = 'flex';
+                
+                // 清除所有高亮
+                document.querySelectorAll('.cell').forEach(c => {
+                    c.classList.remove('selected', 'highlight-related', 'highlight-same');
+                });
+            }
+        }
+
+        /**
+         * 關閉勝利界面
+         * 隱藏勝利彈窗，返回遊戲界面
+         */
+        function closeOverlay() {
+            document.getElementById('victory-overlay').style.display = 'none';
+        }
+
+        /**
+         * 切換音效開關
+         * 開啟或關閉遊戲音效
+         */
+        function toggleSound() {
+            // 切換音效狀態
+            soundEnabled = !soundEnabled;
+            
+            // 更新按鈕顏色
+            const soundBtn = document.getElementById('btn-sound');
+            if (soundEnabled) {
+                soundBtn.classList.add('btn-on');
+                soundBtn.classList.remove('btn-secondary');
+            } else {
+                soundBtn.classList.remove('btn-on');
+                soundBtn.classList.add('btn-secondary');
+            }
+        }
+    </script>
+</body>
+</html>
