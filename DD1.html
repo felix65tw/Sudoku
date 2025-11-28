@@ -1,887 +1,861 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- 文件類型聲明，告訴瀏覽器使用HTML5解析文件 -->
     <meta charset="UTF-8">
-    <!-- 設置字符編碼為UTF-8，支援中文顯示 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 視口設置，確保在移動設備上正確顯示，禁止縮放 -->
     <title>數獨遊戲</title>
-    <!-- 頁面標題 -->
     <style>
-        /* 
-        CSS變數定義區域
-        使用CSS變數便於主題管理和統一風格
-        */
+        /* CSS變數定義 - 亮色主題 */
         :root {
-            --bg-color: #f5f7fa;           /* 頁面背景顏色 */
-            --card-bg: #ffffff;            /* 卡片背景顏色 */
-            --text-color: #2c3e50;         /* 主要文字顏色 */
-            --text-secondary: #7f8c8d;     /* 次要文字顏色 */
-            --primary: #3498db;            /* 主要顏色（藍色） */
-            --primary-light: #5dade2;      /* 淺主要顏色 */
-            --success: #2ecc71;            /* 成功顏色（綠色） */
-            --success-light: #58d68d;      /* 淺成功顏色 */
-            --danger: #e74c3c;             /* 危險/錯誤顏色（紅色） */
-            --warning: #f39c12;            /* 警告顏色（橙色） */
-            --highlight: #e8f4fd;          /* 高亮背景顏色 */
-            --border: #bdc3c7;             /* 邊框顏色 */
-            --shadow: rgba(0, 0, 0, 0.1);  /* 陰影顏色 */
-            --disabled: #95a5a6;           /* 禁用狀態顏色 */
+            --bg-color: #f5f7fa; /* 背景顏色 */
+            --card-bg: #ffffff; /* 卡片背景顏色 */
+            --text-color: #2c3e50; /* 主要文字顏色 */
+            --text-secondary: #7f8c8d; /* 次要文字顏色 */
+            --primary: #3498db; /* 主要顏色 */
+            --primary-light: #5dade2; /* 主要顏色淺色版 */
+            --success: #2ecc71; /* 成功顏色 */
+            --success-light: #58d68d; /* 成功顏色淺色版 */
+            --danger: #e74c3c; /* 危險顏色 */
+            --warning: #f39c12; /* 警告顏色 */
+            --highlight: #e8f4fd; /* 高亮顏色 */
+            --border: #bdc3c7; /* 邊框顏色 */
+            --shadow: rgba(0, 0, 0, 0.1); /* 陰影顏色 */
+            --disabled: #95a5a6; /* 禁用狀態顏色 */
         }
 
-        /* 
-        全局樣式重置
-        確保所有元素使用相同的盒模型，並優化移動端體驗
-        */
+        /* CSS變數定義 - 暗色主題 */
+        .dark-theme {
+            --bg-color: #1a1a2e; /* 暗色背景顏色 */
+            --card-bg: #16213e; /* 暗色卡片背景顏色 */
+            --text-color: #e6e6e6; /* 暗色主要文字顏色 */
+            --text-secondary: #b0b0b0; /* 暗色次要文字顏色 */
+            --primary: #3498db; /* 暗色主要顏色 */
+            --primary-light: #5dade2; /* 暗色主要顏色淺色版 */
+            --success: #2ecc71; /* 暗色成功顏色 */
+            --success-light: #58d68d; /* 暗色成功顏色淺色版 */
+            --danger: #e74c3c; /* 暗色危險顏色 */
+            --warning: #f39c12; /* 暗色警告顏色 */
+            --highlight: #2c3e50; /* 暗色高亮顏色 */
+            --border: #4a5568; /* 暗色邊框顏色，提高可見度 */
+            --shadow: rgba(0, 0, 0, 0.3); /* 暗色陰影顏色 */
+            --disabled: #7f8c8d; /* 暗色禁用狀態顏色 */
+        }
+
+        /* 通用樣式設定 */
         * {
-            box-sizing: border-box; /* 使用border-box盒模型，便於尺寸計算 */
-            touch-action: manipulation; /* 優化移動端觸摸體驗，防止雙擊縮放 */
-            -webkit-tap-highlight-color: transparent; /* 移除移動端點擊高亮效果 */
+            box-sizing: border-box; /* 盒模型設定 */
+            touch-action: manipulation; /* 觸控操作優化 */
+            -webkit-tap-highlight-color: transparent; /* 移除點擊高亮 */
         }
 
-        /* 
-        頁面主體樣式
-        設置整體佈局和基礎樣式
-        */
+        /* 主體樣式 */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* 使用系統字體棧 */
-            background-color: var(--bg-color); /* 使用CSS變數設置背景色 */
-            color: var(--text-color); /* 使用CSS變數設置文字顏色 */
-            margin: 0; /* 移除預設外邊距 */
-            padding: 10px; /* 添加內邊距 */
-            display: flex; /* 使用彈性佈局 */
-            flex-direction: column; /* 垂直方向排列子元素 */
-            align-items: center; /* 水平居中子元素 */
-            min-height: 100vh; /* 最小高度為視口高度 */
-            overflow: hidden; /* 禁止頁面滾動 */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* 字體設定 */
+            background-color: var(--bg-color); /* 使用變數設定背景顏色 */
+            color: var(--text-color); /* 使用變數設定文字顏色 */
+            margin: 0; /* 移除預設邊距 */
+            padding: 10px; /* 內邊距 */
+            display: flex; /* 彈性佈局 */
+            flex-direction: column; /* 垂直方向排列 */
+            align-items: center; /* 水平置中 */
+            min-height: 100vh; /* 最小高度為視窗高度 */
+            overflow: hidden; /* 隱藏溢出內容 */
+            transition: background-color 0.3s, color 0.3s; /* 過渡效果 */
         }
 
-        /* 
-        遊戲主容器樣式
-        限制最大寬度為九宮格寬度，保持整體佈局緊湊
-        */
+        /* 遊戲容器樣式 */
         .game-container {
-            width: 100%; /* 寬度100%適應父容器 */
-            max-width: 400px; /* 限制最大寬度為九宮格寬度 */
-            display: flex; /* 使用彈性佈局 */
-            flex-direction: column; /* 垂直方向排列子元素 */
-            gap: 6px; /* 子元素之間的間距 */
-            overflow: hidden; /* 防止容器內滾動 */
+            width: 100%; /* 寬度100% */
+            max-width: 400px; /* 最大寬度 */
+            display: flex; /* 彈性佈局 */
+            flex-direction: column; /* 垂直方向排列 */
+            gap: 6px; /* 元素間距 */
+            overflow: hidden; /* 隱藏溢出內容 */
         }
 
-        /* 
-        頂部控制欄樣式
-        包含功能按鈕和難度選擇
-        */
+        /* 頂部控制欄樣式 */
         .controls-top {
-            display: flex; /* 使用彈性佈局 */
-            justify-content: space-between; /* 子元素兩端對齊 */
-            align-items: center; /* 垂直居中 */
-            gap: 6px; /* 子元素之間的間距 */
+            display: flex; /* 彈性佈局 */
+            justify-content: space-between; /* 兩端對齊 */
+            align-items: center; /* 垂直置中 */
+            gap: 6px; /* 元素間距 */
             flex-wrap: wrap; /* 允許換行 */
+            margin-top: 0; /* 上邊距 */
+            margin-bottom: 0; /* 下邊距 */
         }
 
-        /* 
-        基礎按鈕樣式
-        定義所有按鈕的共同樣式
-        */
+        /* 按鈕基礎樣式 */
         .btn {
             padding: 6px 10px; /* 內邊距 */
             border: none; /* 移除邊框 */
-            border-radius: 6px; /* 圓角邊框 */
+            border-radius: 6px; /* 圓角 */
             color: white; /* 文字顏色 */
             font-size: 0.9rem; /* 字體大小 */
             font-weight: 600; /* 字體粗細 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            transition: all 0.2s; /* 過渡動畫效果 */
-            flex: 1; /* 彈性佈局，平均分配空間 */
-            min-width: 0; /* 允許縮小到0寬度 */
-            text-align: center; /* 文字居中 */
+            cursor: pointer; /* 鼠標樣式 */
+            transition: all 0.2s; /* 過渡效果 */
+            flex: 1; /* 彈性擴展 */
+            min-width: 0; /* 最小寬度 */
+            text-align: center; /* 文字置中 */
         }
 
-        /* 按鈕激活狀態效果 */
+        /* 按鈕點擊效果 */
         .btn:active {
-            transform: scale(0.95); /* 點擊時縮小效果 */
+            transform: scale(0.95); /* 縮小效果 */
         }
 
-        /* 主要按鈕樣式 - 用於新遊戲按鈕 */
+        /* 主要按鈕樣式 */
         .btn-primary {
-            background-color: var(--primary); /* 使用主要顏色 */
+            background-color: var(--primary); /* 使用變數設定背景顏色 */
         }
 
-        /* 次要按鈕樣式 - 用於預設狀態的功能按鈕 */
+        /* 次要按鈕樣式 */
         .btn-secondary {
-            background-color: var(--card-bg); /* 使用卡片背景色 */
-            color: var(--text-color); /* 使用主要文字顏色 */
-            border: 1px solid var(--border); /* 添加邊框 */
+            background-color: var(--card-bg); /* 使用變數設定背景顏色 */
+            color: var(--text-color); /* 使用變數設定文字顏色 */
+            border: 1px solid var(--border); /* 使用變數設定邊框 */
         }
 
-        /* 開啟狀態按鈕樣式 - 用於筆記和音效開啟狀態 */
+        /* 開啟狀態按鈕樣式 */
         .btn-on {
-            background-color: var(--success); /* 使用成功顏色 */
-            color: white; /* 文字顏色為白色 */
+            background-color: var(--success); /* 使用變數設定背景顏色 */
+            color: white; /* 文字顏色 */
         }
 
-        /* 
-        圖標按鈕樣式
-        移除背景和邊框，僅顯示圖標
-        */
+        /* 圖標按鈕樣式 */
         .icon-btn {
-            background: none; /* 無背景 */
-            border: none; /* 無邊框 */
-            font-size: 1.5rem; /* 圖標大小 */
-            cursor: pointer; /* 滑鼠指針樣式 */
+            background: none; /* 透明背景 */
+            border: none; /* 移除邊框 */
+            font-size: 1.5rem; /* 字體大小 */
+            cursor: pointer; /* 鼠標樣式 */
             padding: 8px; /* 內邊距 */
-            border-radius: 6px; /* 圓角邊框 */
-            transition: all 0.2s; /* 過渡動畫效果 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
+            border-radius: 6px; /* 圓角 */
+            transition: all 0.2s; /* 過渡效果 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
         }
 
-        /* 圖標按鈕激活狀態效果 */
+        /* 圖標按鈕點擊效果 */
         .icon-btn:active {
-            transform: scale(0.95); /* 點擊時縮小效果 */
-            background-color: rgba(0, 0, 0, 0.1); /* 點擊時添加背景色 */
+            transform: scale(0.95); /* 縮小效果 */
+            background-color: rgba(0, 0, 0, 0.1); /* 背景顏色變化 */
         }
 
-        /* 
-        狀態欄樣式
-        包含計時器和統計信息
-        */
+        /* 狀態欄樣式 */
         .status-bar {
-            display: flex; /* 使用彈性佈局 */
-            justify-content: space-between; /* 子元素兩端對齊 */
-            align-items: center; /* 垂直居中 */
+            display: flex; /* 彈性佈局 */
+            justify-content: space-between; /* 兩端對齊 */
+            align-items: center; /* 垂直置中 */
             font-size: 0.7rem; /* 字體大小 */
-            padding: 0; /* 移除內邊距 */
-            margin: 0; /* 移除外邊距 */
-            line-height: 0.1; /* 最小化行高，達到幾乎無距離 */
-            margin-top: 15px; /* 減小與上方功能鍵的間距 */
+            padding: 0; /* 內邊距 */
+            margin: 0; /* 外邊距 */
+            line-height: 0.5; /* 行高 */
+            margin-top: 0; /* 上邊距 */
         }
 
         /* 計時器容器樣式 */
         .timer-container {
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            gap: 5px; /* 子元素之間的間距（計時器與暫停按鈕之間5px） */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            gap: 5px; /* 元素間距 */
         }
 
         /* 計時器樣式 */
         .timer {
-            font-weight: 700; /* 字體加粗 */
-            font-family: monospace; /* 使用等寬字體，確保數字對齊 */
-            color: var(--primary); /* 使用主要顏色 */
+            font-weight: 700; /* 字體粗細 */
+            font-family: monospace; /* 等寬字體 */
+            color: var(--primary); /* 使用變數設定文字顏色 */
         }
 
         /* 暫停按鈕樣式 */
         .pause-btn {
-            font-size: 0.7rem; /* 字體大小與計時器相同 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            color: var(--text-secondary); /* 使用次要文字顏色 */
-            transition: color 0.2s; /* 顏色過渡動畫 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
-            width: 5px; /* 固定寬度 */
-            height: 5px; /* 固定高度 */
+            font-size: 0.7rem; /* 字體大小 */
+            cursor: pointer; /* 鼠標樣式 */
+            color: var(--text-secondary); /* 使用變數設定文字顏色 */
+            transition: color 0.2s; /* 過渡效果 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
+            width: 5px; /* 寬度 */
+            height: 5px; /* 高度 */
         }
 
         /* 暫停按鈕懸停效果 */
         .pause-btn:hover {
-            color: var(--primary); /* 懸停時使用主要顏色 */
+            color: var(--primary); /* 使用變數設定文字顏色 */
         }
 
-        /* 統計信息容器樣式 */
+        /* 統計資訊樣式 */
         .stats {
-            display: flex; /* 使用彈性佈局 */
-            gap: 12px; /* 子元素之間的間距 */
+            display: flex; /* 彈性佈局 */
+            gap: 12px; /* 元素間距 */
         }
 
-        /* 單個統計項樣式 */
+        /* 統計項目樣式 */
         .stat-item {
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            gap: 4px; /* 子元素之間的間距 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            gap: 4px; /* 元素間距 */
         }
 
         /* 統計圖標樣式 */
         .stat-icon {
-            font-size: 1rem; /* 圖標大小 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
+            font-size: 1rem; /* 字體大小 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
         }
 
-        /* 錯誤圖標樣式 */
+        /* 錯誤統計圖標樣式 */
         .stat-icon.error {
-            color: var(--danger); /* 使用危險顏色 */
+            color: var(--danger); /* 使用變數設定文字顏色 */
         }
 
-        /* 提示圖標樣式 */
+        /* 提示統計圖標樣式 */
         .stat-icon.hint {
-            color: var(--warning); /* 使用警告顏色 */
+            color: var(--warning); /* 使用變數設定文字顏色 */
         }
 
-        /* 統計值樣式 */
+        /* 統計數值樣式 */
         .stat-value {
-            font-weight: 700; /* 字體加粗 */
-            font-family: monospace; /* 使用等寬字體，確保數字對齊 */
-            min-width: 20px; /* 預留兩位數字空間 */
-            text-align: center; /* 文字居中 */
-            color: var(--text-color); /* 使用主要文字顏色 */
+            font-weight: 700; /* 字體粗細 */
+            font-family: monospace; /* 等寬字體 */
+            min-width: 20px; /* 最小寬度 */
+            text-align: center; /* 文字置中 */
+            color: var(--text-color); /* 使用變數設定文字顏色 */
         }
 
-        /* 
-        數獨棋盤樣式
-        使用CSS Grid佈局創建9x9網格
-        */
+        /* 數獨棋盤樣式 */
         #sudoku-board {
-            display: grid; /* 使用網格佈局 */
-            grid-template-columns: repeat(9, 1fr); /* 9列，每列等寬 */
-            grid-template-rows: repeat(9, 1fr); /* 9行，每行等高 */
-            width: 100%; /* 寬度100%適應父容器 */
-            aspect-ratio: 1; /* 保持寬高比為1:1（正方形） */
-            background-color: var(--border); /* 使用邊框顏色作為背景 */
-            border: 2px solid var(--border); /* 添加邊框 */
-            gap: 1px; /* 單元格之間的間隙 */
-            border-radius: 4px; /* 圓角邊框 */
+            display: grid; /* 網格佈局 */
+            grid-template-columns: repeat(9, 1fr); /* 9列等寬 */
+            grid-template-rows: repeat(9, 1fr); /* 9行等高 */
+            width: 100%; /* 寬度100% */
+            aspect-ratio: 1; /* 寬高比1:1 */
+            background-color: var(--border); /* 使用變數設定背景顏色 */
+            border: 2px solid var(--border); /* 使用變數設定邊框 */
+            gap: 1px; /* 網格間距 */
+            border-radius: 4px; /* 圓角 */
             overflow: hidden; /* 隱藏溢出內容 */
-            box-shadow: 0 4px 8px var(--shadow); /* 添加陰影效果 */
-            transition: filter 0.3s ease; /* 添加濾鏡過渡效果 */
+            box-shadow: 0 4px 8px var(--shadow); /* 陰影效果 */
+            transition: filter 0.3s ease; /* 過渡效果 */
         }
 
-        /* 九宮格模糊效果（暫停時使用） */
+        /* 模糊狀態的數獨棋盤樣式 */
         #sudoku-board.blurred {
-            filter: blur(4px); /* 應用模糊效果 */
-            pointer-events: none; /* 禁用滑鼠事件 */
+            filter: blur(4px); /* 模糊效果 */
+            pointer-events: none; /* 禁用點擊事件 */
         }
 
-        /* 
-        數獨單元格樣式
-        每個單元格的基本樣式
-        */
+        /* 單元格樣式 */
         .cell {
-            background-color: var(--card-bg); /* 使用卡片背景色 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
-            font-size: 1.6rem; /* 增大九宮格內數字 */
-            font-weight: 600; /* 字體加粗 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            position: relative; /* 相對定位，用於筆記網格定位 */
-            user-select: none; /* 防止文本選擇 */
+            background-color: var(--card-bg); /* 使用變數設定背景顏色 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
+            font-size: 1.6rem; /* 字體大小 */
+            font-weight: 600; /* 字體粗細 */
+            cursor: pointer; /* 鼠標樣式 */
+            position: relative; /* 相對定位 */
+            user-select: none; /* 禁止文字選擇 */
+            transition: background-color 0.3s, color 0.3s; /* 過渡效果 */
         }
 
-        /* 初始線索數字樣式 - 所有數字都使用這個顏色 */
+        /* 線索單元格和已填寫單元格樣式 */
         .cell.clue, .cell.filled {
-            color: var(--primary); /* 使用主要顏色 */
-            font-weight: 700; /* 字體加粗 */
+            color: var(--primary); /* 使用變數設定文字顏色 */
+            font-weight: 700; /* 字體粗細 */
         }
 
-        /* 3x3宮格邊框增強 */
-        .cell.border-right { border-right: 2px solid var(--border); } /* 右側粗邊框 */
-        .cell.border-bottom { border-bottom: 2px solid var(--border); } /* 底部粗邊框 */
+        /* 右邊框樣式 */
+        .cell.border-right { border-right: 2px solid var(--border); } /* 使用變數設定右邊框 */
 
-        /* 高亮相關單元格（同一行、列和宮格） */
-        .cell.highlight-related { background-color: var(--highlight); } /* 使用高亮背景色 */
+        /* 下邊框樣式 */
+        .cell.border-bottom { border-bottom: 2px solid var(--border); } /* 使用變數設定下邊框 */
 
-        /* 選中的單元格高亮 */
+        /* 相關單元格高亮樣式 */
+        .cell.highlight-related { background-color: var(--highlight); } /* 使用變數設定背景顏色 */
+
+        /* 選中單元格樣式 */
         .cell.selected { background-color: rgba(52, 152, 219, 0.2) !important; } /* 半透明藍色背景 */
 
-        /* 相同數字高亮 */
-        .cell.highlight-same { background-color: rgba(52, 152, 219, 0.3) !important; } /* 半透明藍色背景，略深 */
+        /* 相同數字高亮樣式 */
+        .cell.highlight-same { background-color: rgba(52, 152, 219, 0.3) !important; } /* 半透明藍色背景 */
 
-        /* 錯誤數字樣式 */
-        .cell.error { color: var(--danger); } /* 使用危險顏色 */
+        /* 錯誤單元格樣式 */
+        .cell.error { color: var(--danger); } /* 使用變數設定文字顏色 */
 
-        /* 
-        筆記網格樣式 - 用於顯示候選數字
-        使用絕對定位覆蓋在單元格上
-        */
+        /* 筆記網格樣式 */
         .notes-grid {
             position: absolute; /* 絕對定位 */
             top: 0; /* 頂部對齊 */
             left: 0; /* 左側對齊 */
-            width: 100%; /* 寬度100%適應父容器 */
-            height: 100%; /* 高度100%適應父容器 */
-            display: grid; /* 使用網格佈局 */
-            grid-template-columns: repeat(3, 1fr); /* 3列，每列等寬 */
-            grid-template-rows: repeat(3, 1fr); /* 3行，每行等高 */
-            pointer-events: none; /* 防止筆記網格干擾單元格點擊 */
+            width: 100%; /* 寬度100% */
+            height: 100%; /* 高度100% */
+            display: grid; /* 網格佈局 */
+            grid-template-columns: repeat(3, 1fr); /* 3列等寬 */
+            grid-template-rows: repeat(3, 1fr); /* 3行等高 */
+            pointer-events: none; /* 禁用點擊事件 */
             padding: 1px; /* 內邊距 */
         }
 
-        /* 單個筆記數字樣式 */
+        /* 筆記數字樣式 */
         .note-num {
-            font-size: 0.7rem; /* 筆記字體 */
-            color: var(--text-secondary); /* 使用次要文字顏色 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
-            line-height: 1; /* 行高為1 */
+            font-size: 0.7rem; /* 字體大小 */
+            color: var(--text-secondary); /* 使用變數設定文字顏色 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
+            line-height: 1; /* 行高 */
             font-weight: 500; /* 字體粗細 */
         }
 
-        /* 高亮筆記中的相同數字 */
+        /* 高亮筆記數字樣式 */
         .note-num.highlighted {
-            background-color: var(--primary-light); /* 使用淺主要顏色 */
-            color: white; /* 文字顏色為白色 */
-            border-radius: 2px; /* 圓角邊框 */
-            font-weight: 600; /* 字體加粗 */
+            background-color: var(--primary-light); /* 使用變數設定背景顏色 */
+            color: white; /* 文字顏色 */
+            border-radius: 2px; /* 圓角 */
+            font-weight: 600; /* 字體粗細 */
         }
 
-        /* 
-        數字鍵盤樣式
-        包含1-9的數字按鈕 - 改為長方形按鈕
-        */
+        /* 數字鍵盤樣式 */
         .keypad {
-            display: flex; /* 使用彈性佈局 */
-            gap: 6px; /* 子元素之間的間距 */
-            width: 100%; /* 寬度100%適應父容器 */
-            height: 50px; /* 固定高度，使按鈕變成長方形 */
+            display: flex; /* 彈性佈局 */
+            gap: 6px; /* 元素間距 */
+            width: 100%; /* 寬度100% */
+            height: 50px; /* 高度 */
         }
 
-        /* 數字按鈕樣式 - 改為長方形 */
+        /* 數字按鈕樣式 */
         .numpad-btn {
-            flex: 1; /* 彈性佈局，平均分配空間 */
-            background: var(--card-bg); /* 使用卡片背景色 */
-            border: 1px solid var(--border); /* 添加邊框 */
-            border-radius: 6px; /* 圓角邊框 */
-            display: flex; /* 使用彈性佈局 */
-            flex-direction: column; /* 垂直方向排列子元素 */
-            align-items: center; /* 水平居中 */
-            justify-content: center; /* 垂直居中 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            transition: all 0.2s; /* 過渡動畫效果 */
-            /* 移除 aspect-ratio: 1; 使按鈕變成長方形 */
+            flex: 1; /* 彈性擴展 */
+            background: var(--card-bg); /* 使用變數設定背景顏色 */
+            border: 1px solid var(--border); /* 使用變數設定邊框 */
+            border-radius: 6px; /* 圓角 */
+            display: flex; /* 彈性佈局 */
+            flex-direction: column; /* 垂直方向排列 */
+            align-items: center; /* 水平置中 */
+            justify-content: center; /* 垂直置中 */
+            cursor: pointer; /* 鼠標樣式 */
+            transition: all 0.2s; /* 過渡效果 */
         }
 
-        /* 數字按鈕激活狀態效果 */
+        /* 數字按鈕點擊效果 */
         .numpad-btn:active {
-            transform: scale(0.95); /* 點擊時縮小效果 */
+            transform: scale(0.95); /* 縮小效果 */
         }
 
-        /* 數字按鈕中的數字樣式 */
+        /* 數字樣式 */
         .numpad-btn .num {
             font-size: 1.2rem; /* 字體大小 */
-            font-weight: 700; /* 字體加粗 */
-            color: var(--primary); /* 使用主要顏色 */
+            font-weight: 700; /* 字體粗細 */
+            color: var(--primary); /* 使用變數設定文字顏色 */
         }
 
-        /* 數字按鈕中的計數樣式 */
+        /* 計數樣式 */
         .numpad-btn .count {
-            font-size: 0.6rem; /* 減小字體 */
-            color: var(--text-secondary); /* 使用次要文字顏色 */
-            margin-top: 1px; /* 減小行距 */
-            line-height: 1; /* 減小行距 */
+            font-size: 0.6rem; /* 字體大小 */
+            color: var(--text-secondary); /* 使用變數設定文字顏色 */
+            margin-top: 1px; /* 上邊距 */
+            line-height: 1; /* 行高 */
         }
 
-        /* 已完成的數字按鈕變淡 */
+        /* 淡出狀態的數字按鈕樣式 */
         .numpad-btn.faded {
-            opacity: 0.4; /* 降低不透明度 */
+            opacity: 0.4; /* 透明度 */
         }
 
-        /* 建議數字突出顯示 */
+        /* 建議數字按鈕樣式 */
         .numpad-btn.suggested {
-            border: 2px solid var(--warning); /* 使用警告顏色作為邊框 */
-            animation: pulse 1.5s infinite; /* 添加脈衝動畫 */
+            border: 2px solid var(--warning); /* 使用變數設定邊框 */
+            animation: pulse 1.5s infinite; /* 脈衝動畫 */
         }
 
-        /* 脈衝動畫關鍵幀 */
+        /* 脈衝動畫定義 */
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); } /* 初始狀態 */
             70% { box-shadow: 0 0 0 6px rgba(243, 156, 18, 0); } /* 中間狀態 */
             100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } /* 結束狀態 */
         }
 
-        /* 
-        遮罩層樣式 - 用於勝利界面和暫停界面
-        覆蓋整個屏幕的半透明層
-        */
+        /* 遮罩層樣式 */
         .overlay {
             position: fixed; /* 固定定位 */
             top: 0; /* 頂部對齊 */
             left: 0; /* 左側對齊 */
-            width: 100%; /* 寬度100%適應視口 */
-            height: 100%; /* 高度100%適應視口 */
+            width: 100%; /* 寬度100% */
+            height: 100%; /* 高度100% */
             background: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
             display: none; /* 預設隱藏 */
-            justify-content: center; /* 水平居中 */
-            align-items: center; /* 垂直居中 */
-            z-index: 1000; /* 高z-index確保在最上層 */
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            z-index: 1000; /* 層級 */
         }
 
-        /* 模態對話框樣式 */
+        /* 模態框樣式 */
         .modal {
-            background: var(--card-bg); /* 使用卡片背景色 */
-            padding: 30px; /* 增加內邊距 */
-            border-radius: 16px; /* 增加圓角邊框 */
-            text-align: center; /* 文字居中 */
-            max-width: 90%; /* 最大寬度為視口寬度的90% */
-            width: 320px; /* 增加固定寬度 */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* 增加陰影效果 */
-            border: 2px solid var(--primary); /* 添加邊框 */
+            background: var(--card-bg); /* 使用變數設定背景顏色 */
+            padding: 30px; /* 內邊距 */
+            border-radius: 16px; /* 圓角 */
+            text-align: center; /* 文字置中 */
+            max-width: 90%; /* 最大寬度 */
+            width: 320px; /* 寬度 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* 陰影效果 */
+            border: 2px solid var(--primary); /* 使用變數設定邊框 */
             position: relative; /* 相對定位 */
             overflow: hidden; /* 隱藏溢出內容 */
         }
 
-        /* 勝利界面專用樣式 */
+        /* 勝利模態框樣式 */
         .victory-modal {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 使用柔和的藍色和粉色漸變背景 */
-            color: white; /* 文字顏色為白色 */
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 漸變背景 */
+            color: #5a67d8; /* 調整文字顏色為更輕鬆的藍紫色 */
             border: none; /* 移除邊框 */
-            animation: victory-appear 0.8s ease-out; /* 添加勝利界面動畫 */
-            overflow: visible; /* 允許聖誕燈顯示在邊界外 */
+            animation: victory-appear 0.8s ease-out; /* 勝利出現動畫 */
+            overflow: visible; /* 顯示溢出內容 */
         }
 
-        /* 勝利界面標題樣式 */
+        /* 勝利模態框標題樣式 */
         .victory-modal h2 {
-            margin-top: 0; /* 移除頂部外邊距 */
-            font-size: 2.2rem; /* 增大標題字體大小 */
-            margin-bottom: 20px; /* 底部外邊距 */
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 添加文字陰影 */
+            margin-top: 0; /* 上邊距 */
+            font-size: 2.2rem; /* 字體大小 */
+            margin-bottom: 20px; /* 下邊距 */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 文字陰影 */
+            color: #4c51bf; /* 標題顏色 */
         }
 
-        /* 勝利界面段落樣式 */
+        /* 勝利模態框段落樣式 */
         .victory-modal p {
-            color: rgba(255, 255, 255, 0.9); /* 使用半透明白色 */
-            margin-bottom: 20px; /* 底部外邊距 */
-            font-size: 1.1rem; /* 增大段落字體大小 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* 添加文字陰影 */
+            color: #5a67d8; /* 文字顏色 */
+            margin-bottom: 20px; /* 下邊距 */
+            font-size: 1.1rem; /* 字體大小 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 文字陰影 */
+            font-weight: 500; /* 字體粗細 */
         }
 
-        /* 勝利界面按鈕樣式 */
+        /* 勝利模態框按鈕樣式 */
         .victory-modal .modal-btn {
             background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
-            color: #667eea; /* 使用漸變背景的顏色 */
+            color: #667eea; /* 文字顏色 */
             border: none; /* 移除邊框 */
-            border-radius: 8px; /* 圓角邊框 */
+            border-radius: 8px; /* 圓角 */
             font-size: 1.1rem; /* 字體大小 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            transition: all 0.3s; /* 過渡動畫效果 */
+            cursor: pointer; /* 鼠標樣式 */
+            transition: all 0.3s; /* 過渡效果 */
             padding: 12px 24px; /* 內邊距 */
-            width: 100%; /* 寬度100%適應父容器 */
-            font-weight: 600; /* 字體加粗 */
+            width: 100%; /* 寬度100% */
+            font-weight: 600; /* 字體粗細 */
         }
 
-        /* 勝利界面按鈕懸停效果 */
+        /* 勝利模態框按鈕懸停效果 */
         .victory-modal .modal-btn:hover {
-            background: white; /* 懸停時背景變為純白色 */
-            transform: translateY(-2px); /* 懸停時向上移動 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 懸停時添加陰影 */
+            background: white; /* 白色背景 */
+            transform: translateY(-2px); /* 上移效果 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影效果 */
         }
 
-        /* 勝利界面按鈕激活狀態效果 */
+        /* 勝利模態框按鈕點擊效果 */
         .victory-modal .modal-btn:active {
-            transform: translateY(0); /* 點擊時恢復原位 */
+            transform: translateY(0); /* 還原位置 */
         }
 
-        /* 暫停界面專用樣式 - 修改為柔和顏色 */
+        /* 暫停模態框樣式 */
         .pause-modal {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 使用柔和的藍色和粉色漸變背景 */
-            color: white; /* 文字顏色為白色 */
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 漸變背景 */
+            color: #5a67d8; /* 調整文字顏色為更輕鬆的藍紫色 */
             border: none; /* 移除邊框 */
         }
 
-        /* 暫停界面標題樣式 */
+        /* 暫停模態框標題樣式 */
         .pause-modal h2 {
-            margin-top: 0; /* 移除頂部外邊距 */
-            font-size: 1.8rem; /* 增大標題字體大小 */
-            margin-bottom: 15px; /* 底部外邊距 */
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 添加文字陰影 */
+            margin-top: 0; /* 上邊距 */
+            font-size: 1.8rem; /* 字體大小 */
+            margin-bottom: 15px; /* 下邊距 */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 文字陰影 */
+            color: #4c51bf; /* 標題顏色 */
         }
 
-        /* 暫停界面段落樣式 */
+        /* 暫停模態框段落樣式 */
         .pause-modal p {
-            color: rgba(255, 255, 255, 0.9); /* 使用半透明白色 */
-            margin-bottom: 20px; /* 底部外邊距 */
-            font-size: 1rem; /* 段落字體大小 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* 添加文字陰影 */
+            color: #5a67d8; /* 文字顏色 */
+            margin-bottom: 20px; /* 下邊距 */
+            font-size: 1rem; /* 字體大小 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 文字陰影 */
         }
 
-        /* 暫停界面按鈕樣式 */
+        /* 暫停模態框按鈕樣式 */
         .pause-modal .modal-btn {
             background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
-            color: #66a6ff; /* 使用柔和的藍色 */
+            color: #66a6ff; /* 文字顏色 */
             border: none; /* 移除邊框 */
-            border-radius: 8px; /* 圓角邊框 */
+            border-radius: 8px; /* 圓角 */
             font-size: 1rem; /* 字體大小 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            transition: all 0.3s; /* 過渡動畫效果 */
+            cursor: pointer; /* 鼠標樣式 */
+            transition: all 0.3s; /* 過渡效果 */
             padding: 10px 20px; /* 內邊距 */
-            width: 100%; /* 寬度100%適應父容器 */
-            font-weight: 600; /* 字體加粗 */
+            width: 100%; /* 寬度100% */
+            font-weight: 600; /* 字體粗細 */
         }
 
-        /* 暫停界面按鈕懸停效果 */
+        /* 暫停模態框按鈕懸停效果 */
         .pause-modal .modal-btn:hover {
-            background: white; /* 懸停時背景變為純白色 */
-            transform: translateY(-2px); /* 懸停時向上移動 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 懸停時添加陰影 */
+            background: white; /* 白色背景 */
+            transform: translateY(-2px); /* 上移效果 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影效果 */
         }
 
-        /* 暫停界面按鈕激活狀態效果 */
+        /* 暫停模態框按鈕點擊效果 */
         .pause-modal .modal-btn:active {
-            transform: translateY(0); /* 點擊時恢復原位 */
+            transform: translateY(0); /* 還原位置 */
         }
 
-        /* 聖經經文界面專用樣式 */
+        /* 聖經模態框樣式 */
         .bible-modal {
-            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); /* 使用柔和的米色漸變背景 */
-            color: #5d4037; /* 使用深棕色文字 */
-            border: 2px solid #8d6e63; /* 添加棕色邊框 */
-            /* 移除最大高度限制和滾動條設置，改為自動高度 */
-            overflow-y: visible; /* 允許內容自然顯示，不添加滾動條 */
-            width: 90%; /* 增加寬度 */
-            max-width: 500px; /* 增加最大寬度 */
-            max-height: 90vh; /* 設置最大高度為視口的90%，確保不會超出屏幕 */
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); /* 漸變背景 */
+            color: #5d4037; /* 文字顏色 */
+            border: 2px solid #8d6e63; /* 邊框 */
+            overflow-y: visible; /* 顯示垂直溢出內容 */
+            width: 90%; /* 寬度90% */
+            max-width: 500px; /* 最大寬度 */
+            max-height: 90vh; /* 最大高度 */
         }
 
-        /* 聖經經文界面標題樣式 */
+        /* 聖經模態框標題樣式 */
         .bible-modal h2 {
-            margin-top: 0; /* 移除頂部外邊距 */
-            font-size: 1.8rem; /* 增大標題字體大小 */
-            margin-bottom: 20px; /* 底部外邊距 */
-            color: #5d4037; /* 使用深棕色 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 添加文字陰影 */
-            border-bottom: 2px solid #8d6e63; /* 添加底部邊框 */
+            margin-top: 0; /* 上邊距 */
+            font-size: 1.8rem; /* 字體大小 */
+            margin-bottom: 20px; /* 下邊距 */
+            color: #5d4037; /* 文字顏色 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 文字陰影 */
+            border-bottom: 2px solid #8d6e63; /* 底部邊框 */
             padding-bottom: 10px; /* 底部內邊距 */
         }
 
-        /* 聖經經文內容樣式 */
+        /* 聖經內容樣式 */
         .bible-content {
             text-align: left; /* 文字左對齊 */
-            line-height: 1.8; /* 增加行高提高可讀性 */
-            font-size: 1.1rem; /* 增大字體大小 */
-            color: #4e342e; /* 使用深棕色 */
-            /* 移除最大高度和滾動條設置 */
-            overflow-y: visible; /* 確保內容自然顯示，不添加滾動條 */
-            padding: 15px; /* 增加內邊距 */
+            line-height: 1.8; /* 行高 */
+            font-size: 1.1rem; /* 字體大小 */
+            color: #4e342e; /* 文字顏色 */
+            overflow-y: visible; /* 顯示垂直溢出內容 */
+            padding: 15px; /* 內邊距 */
             background: rgba(255, 255, 255, 0.8); /* 半透明白色背景 */
-            border-radius: 8px; /* 圓角邊框 */
-            margin-bottom: 20px; /* 底部外邊距 */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+            border-radius: 8px; /* 圓角 */
+            margin-bottom: 20px; /* 下邊距 */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 陰影效果 */
         }
 
-        /* 聖經經文段落樣式 - 改為凸排（懸掛縮進） */
+        /* 聖經經文樣式 */
         .bible-verse {
-            margin-bottom: 15px; /* 增加底部外邊距 */
+            margin-bottom: 15px; /* 下邊距 */
             padding: 8px 0; /* 上下內邊距 */
-            border-bottom: 1px dashed #d7ccc8; /* 添加底部虛線邊框 */
-            padding-left: 2.5em; /* 左側內邊距，為節號留出空間 */
-            text-indent: -2.5em; /* 負數縮進，實現凸排效果 */
+            border-bottom: 1px dashed #d7ccc8; /* 底部虛線邊框 */
+            padding-left: 2.5em; /* 左側內邊距 */
+            text-indent: -2.5em; /* 首行縮進 */
         }
 
-        /* 最後一節經文移除底部邊框 */
+        /* 最後一條聖經經文樣式 */
         .bible-verse:last-child {
             border-bottom: none; /* 移除底部邊框 */
         }
 
-        /* 聖經經文節號樣式 */
+        /* 經文編號樣式 */
         .verse-number {
-            font-weight: bold; /* 加粗 */
-            color: #8d6e63; /* 使用棕色 */
-            margin-right: 8px; /* 右側外邊距 */
-            display: inline-block; /* 設置為行內塊元素 */
-            width: 2.5em; /* 固定寬度，確保對齊 */
+            font-weight: bold; /* 字體粗細 */
+            color: #8d6e63; /* 文字顏色 */
+            margin-right: 8px; /* 右邊距 */
+            display: inline-block; /* 行內塊元素 */
+            width: 2.5em; /* 寬度 */
             text-align: right; /* 文字右對齊 */
         }
 
-        /* 聖經經文界面按鈕樣式 */
+        /* 聖經模態框按鈕樣式 */
         .bible-modal .modal-btn {
-            background: #8d6e63; /* 使用棕色背景 */
-            color: white; /* 文字顏色為白色 */
+            background: #8d6e63; /* 背景顏色 */
+            color: white; /* 文字顏色 */
             border: none; /* 移除邊框 */
-            border-radius: 8px; /* 圓角邊框 */
+            border-radius: 8px; /* 圓角 */
             font-size: 1rem; /* 字體大小 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            transition: all 0.3s; /* 過渡動畫效果 */
+            cursor: pointer; /* 鼠標樣式 */
+            transition: all 0.3s; /* 過渡效果 */
             padding: 12px 24px; /* 內邊距 */
-            width: 100%; /* 寬度100%適應父容器 */
-            font-weight: 600; /* 字體加粗 */
-            margin-top: 10px; /* 頂部外邊距 */
+            width: 100%; /* 寬度100% */
+            font-weight: 600; /* 字體粗細 */
+            margin-top: 10px; /* 上邊距 */
         }
 
-        /* 聖經經文界面按鈕懸停效果 */
+        /* 聖經模態框按鈕懸停效果 */
         .bible-modal .modal-btn:hover {
-            background: #6d4c41; /* 懸停時使用更深的棕色 */
-            transform: translateY(-2px); /* 懸停時向上移動 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 懸停時添加陰影 */
+            background: #6d4c41; /* 背景顏色變化 */
+            transform: translateY(-2px); /* 上移效果 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影效果 */
         }
 
-        /* 勝利界面出現動畫 */
+        /* 勝利出現動畫定義 */
         @keyframes victory-appear {
             0% {
                 transform: scale(0.5) rotate(-10deg); /* 初始狀態：縮小並旋轉 */
                 opacity: 0; /* 完全透明 */
             }
             70% {
-                transform: scale(1.05) rotate(5deg); /* 中間狀態：稍微放大並旋轉 */
+                transform: scale(1.05) rotate(5deg); /* 中間狀態：稍微放大並反向旋轉 */
                 opacity: 1; /* 完全不透明 */
             }
             100% {
-                transform: scale(1) rotate(0); /* 最終狀態：正常大小和角度 */
+                transform: scale(1) rotate(0); /* 結束狀態：正常大小和角度 */
                 opacity: 1; /* 完全不透明 */
             }
         }
 
-        /* 聖誕燈容器樣式 */
+        /* 聖誕燈飾樣式 */
         .christmas-lights {
             position: absolute; /* 絕對定位 */
-            top: -20px; /* 頂部位置，稍微超出模態框 */
-            left: 0; /* 左側對齊 */
-            width: 100%; /* 寬度100%適應父容器 */
-            height: 30px; /* 固定高度 */
-            display: flex; /* 使用彈性佈局 */
-            justify-content: space-around; /* 子元素均勻分佈 */
-            align-items: center; /* 垂直居中 */
-            z-index: 10; /* 提高z-index，確保在最上層 */
+            top: -20px; /* 頂部位置 */
+            left: 0; /* 左側位置 */
+            width: 100%; /* 寬度100% */
+            height: 30px; /* 高度 */
+            display: flex; /* 彈性佈局 */
+            justify-content: space-around; /* 均勻分佈 */
+            align-items: center; /* 垂直置中 */
+            z-index: 10; /* 層級 */
         }
 
-        /* 單個聖誕燈樣式 */
+        /* 燈泡樣式 */
         .light {
-            width: 15px; /* 固定寬度 */
-            height: 15px; /* 固定高度 */
+            width: 15px; /* 寬度 */
+            height: 15px; /* 高度 */
             border-radius: 50%; /* 圓形 */
-            animation: light-twinkle 1.5s infinite; /* 添加閃爍動畫 */
-            box-shadow: 0 0 10px currentColor; /* 添加發光效果 */
+            animation: light-twinkle 1.5s infinite; /* 閃爍動畫 */
+            box-shadow: 0 0 10px currentColor; /* 發光效果 */
         }
 
-        /* 聖誕燈閃爍動畫 */
+        /* 燈泡閃爍動畫定義 */
         @keyframes light-twinkle {
             0%, 100% {
-                opacity: 0.3; /* 初始和結束狀態：較低不透明度 */
-                transform: scale(0.8); /* 初始和結束狀態：較小尺寸 */
+                opacity: 0.3; /* 透明度 */
+                transform: scale(0.8); /* 縮小 */
             }
             50% {
-                opacity: 1; /* 中間狀態：完全不透明 */
-                transform: scale(1.2); /* 中間狀態：較大尺寸 */
+                opacity: 1; /* 完全不透明 */
+                transform: scale(1.2); /* 放大 */
             }
         }
 
-        /* 錯誤輸入動畫關鍵幀 */
+        /* 搖晃動畫定義 */
         @keyframes shake {
             0% { transform: translateX(0); } /* 初始位置 */
-            25% { transform: translateX(-3px); } /* 向左移動 */
-            50% { transform: translateX(3px); } /* 向右移動 */
-            75% { transform: translateX(-3px); } /* 再次向左移動 */
+            25% { transform: translateX(-3px); } /* 左移 */
+            50% { transform: translateX(3px); } /* 右移 */
+            75% { transform: translateX(-3px); } /* 左移 */
             100% { transform: translateX(0); } /* 回到初始位置 */
         }
 
-        /* 錯誤數字動畫應用 */
+        /* 錯誤單元格數字搖晃效果 */
         .cell.error .main-num {
-            animation: shake 0.4s ease-in-out; /* 應用抖動動畫 */
+            animation: shake 0.4s ease-in-out; /* 搖晃動畫 */
         }
 
-        /* 提示動畫關鍵幀 */
+        /* 文字閃爍動畫定義 */
         @keyframes text-flash {
             0%, 100% { color: var(--primary); transform: scale(1); } /* 初始和結束狀態 */
             50% { color: #f39c12; transform: scale(1.2); } /* 中間狀態：變色並放大 */
         }
 
-        /* 提示數字動畫應用 */
+        /* 提示單元格數字閃爍效果 */
         .cell.hinting .main-num {
-            animation: text-flash 0.6s ease-in-out 3; /* 應用閃爍動畫，重複3次 */
+            animation: text-flash 0.6s ease-in-out 3; /* 文字閃爍動畫，重複3次 */
         }
 
-        /* 難度選擇下拉菜單樣式 - 修改為英文文字顯示 */
+        /* 難度選擇器樣式 */
         .difficulty-select {
-            background: var(--card-bg); /* 使用卡片背景色 */
-            border: 1px solid var(--border); /* 添加邊框 */
-            border-radius: 6px; /* 圓角邊框 */
-            font-size: 0.9rem; /* 調整字體大小以適應英文文字 */
-            cursor: pointer; /* 滑鼠指針樣式 */
-            padding: 6px 10px; /* 調整內邊距 */
-            transition: all 0.2s; /* 過渡動畫效果 */
-            display: flex; /* 使用彈性佈局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
+            background: var(--card-bg); /* 使用變數設定背景顏色 */
+            border: 1px solid var(--border); /* 使用變數設定邊框 */
+            border-radius: 6px; /* 圓角 */
+            font-size: 0.9rem; /* 字體大小 */
+            cursor: pointer; /* 鼠標樣式 */
+            padding: 6px 10px; /* 內邊距 */
+            transition: all 0.2s; /* 過渡效果 */
+            display: flex; /* 彈性佈局 */
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
             appearance: none; /* 移除預設樣式 */
             -webkit-appearance: none; /* 移除Webkit瀏覽器預設樣式 */
             -moz-appearance: none; /* 移除Firefox預設樣式 */
-            color: var(--text-color); /* 文字顏色 */
-            font-weight: 600; /* 字體加粗 */
-            min-width: 100px; /* 設置最小寬度以容納英文文字 */
-            text-align: center; /* 文字居中 */
-            text-align-last: center; /* 確保選中項在Firefox中居中 */
+            color: var(--text-color); /* 使用變數設定文字顏色 */
+            font-weight: 600; /* 字體粗細 */
+            min-width: 100px; /* 最小寬度 */
+            text-align: center; /* 文字置中 */
+            text-align-last: center; /* 最後一行文字置中 */
         }
 
-        /* 難度選擇下拉菜單激活狀態效果 */
+        /* 難度選擇器點擊效果 */
         .difficulty-select:active {
-            transform: scale(0.95); /* 點擊時縮小效果 */
-            background-color: rgba(0, 0, 0, 0.05); /* 點擊時添加背景色 */
+            transform: scale(0.95); /* 縮小效果 */
+            background-color: rgba(0, 0, 0, 0.05); /* 背景顏色變化 */
         }
 
-        /* 難度選擇下拉菜單選項樣式 */
+        /* 難度選擇器選項樣式 */
         .difficulty-select option {
-            text-align: center; /* 選項文字居中 */
-            font-weight: 600; /* 字體加粗 */
+            text-align: center; /* 文字置中 */
+            font-weight: 600; /* 字體粗細 */
         }
 
-        /* 
-        響應式設計 - 針對小屏幕設備優化
-        當屏幕寬度小於480px時應用以下樣式
-        */
+        /* 響應式設計 - 小屏幕設備 */
         @media (max-width: 480px) {
             .controls-top {
-                gap: 4px; /* 減小子元素之間的間距 */
+                gap: 4px; /* 元素間距 */
+                margin-top: 0; /* 上邊距 */
+                margin-bottom: 0; /* 下邊距 */
             }
             
             .btn {
-                padding: 5px 8px; /* 減小內邊距 */
-                font-size: 0.8rem; /* 減小字體大小 */
+                padding: 5px 8px; /* 內邊距 */
+                font-size: 0.8rem; /* 字體大小 */
             }
             
             .cell {
-                font-size: 1.4rem; /* 減小單元格內數字大小 */
+                font-size: 1.4rem; /* 字體大小 */
             }
             
             .numpad-btn .num {
-                font-size: 1.1rem; /* 減小數字按鈕中數字大小 */
+                font-size: 1.1rem; /* 字體大小 */
             }
             
             .icon-btn {
-                font-size: 1.3rem; /* 減小圖標大小 */
+                font-size: 1.3rem; /* 字體大小 */
             }
             
             .stat-icon {
-                font-size: 0.9rem; /* 減小統計圖標大小 */
+                font-size: 0.9rem; /* 字體大小 */
             }
             
             .keypad {
-                height: 45px; /* 減小數字鍵盤高度 */
+                height: 45px; /* 高度 */
             }
             
             .modal {
-                padding: 20px; /* 減小模態對話框內邊距 */
-                width: 280px; /* 減小模態對話框寬度 */
+                padding: 20px; /* 內邊距 */
+                width: 280px; /* 寬度 */
             }
             
             .victory-modal h2 {
-                font-size: 1.8rem; /* 減小勝利界面標題字體大小 */
+                font-size: 1.8rem; /* 字體大小 */
             }
             
             .victory-modal p {
-                font-size: 1rem; /* 減小勝利界面段落字體大小 */
+                font-size: 1rem; /* 字體大小 */
             }
             
             .victory-modal .modal-btn {
-                font-size: 1rem; /* 減小勝利界面按鈕字體大小 */
+                font-size: 1rem; /* 字體大小 */
             }
             
             .pause-modal h2 {
-                font-size: 1.5rem; /* 減小暫停界面標題字體大小 */
+                font-size: 1.5rem; /* 字體大小 */
             }
             
             .pause-modal p {
-                font-size: 0.9rem; /* 減小暫停界面段落字體大小 */
+                font-size: 0.9rem; /* 字體大小 */
             }
             
             .pause-modal .modal-btn {
-                font-size: 0.9rem; /* 減小暫停界面按鈕字體大小 */
+                font-size: 0.9rem; /* 字體大小 */
             }
             
             .bible-modal {
-                width: 95%; /* 在小屏幕上進一步增加寬度 */
-                max-width: 95%; /* 在小屏幕上進一步增加最大寬度 */
-                padding: 15px; /* 減小內邊距以節省空間 */
+                width: 95%; /* 寬度95% */
+                max-width: 95%; /* 最大寬度95% */
+                padding: 15px; /* 內邊距 */
             }
             
             .bible-modal h2 {
-                font-size: 1.5rem; /* 減小聖經經文界面標題字體大小 */
-                margin-bottom: 15px; /* 減小底部外邊距 */
+                font-size: 1.5rem; /* 字體大小 */
+                margin-bottom: 15px; /* 下邊距 */
             }
             
             .bible-content {
-                font-size: 1rem; /* 減小聖經經文字體大小 */
-                padding: 10px; /* 減小內邊距 */
-                line-height: 1.6; /* 減小行高以節省空間 */
+                font-size: 1rem; /* 字體大小 */
+                padding: 10px; /* 內邊距 */
+                line-height: 1.6; /* 行高 */
             }
             
             .bible-verse {
-                margin-bottom: 12px; /* 減小底部外邊距 */
-                padding-left: 2em; /* 減小左側內邊距 */
-                text-indent: -2em; /* 調整負數縮進 */
+                margin-bottom: 12px; /* 下邊距 */
+                padding-left: 2em; /* 左側內邊距 */
+                text-indent: -2em; /* 首行縮進 */
             }
             
             .verse-number {
-                width: 2em; /* 減小節號寬度 */
+                width: 2em; /* 寬度 */
             }
             
             .christmas-lights {
-                top: -15px; /* 調整頂部位置 */
-                height: 25px; /* 減小高度 */
+                top: -15px; /* 頂部位置 */
+                height: 25px; /* 高度 */
             }
             
             .light {
-                width: 12px; /* 減小聖誕燈寬度 */
-                height: 12px; /* 減小聖誕燈高度 */
+                width: 12px; /* 寬度 */
+                height: 12px; /* 高度 */
             }
             
             .difficulty-select {
-                font-size: 0.8rem; /* 減小難度選擇字體大小 */
-                min-width: 90px; /* 減小最小寬度 */
-                padding: 5px 8px; /* 減小內邊距 */
+                font-size: 0.8rem; /* 字體大小 */
+                min-width: 90px; /* 最小寬度 */
+                padding: 5px 8px; /* 內邊距 */
             }
         }
     </style>
 </head>
 <body>
-    <!-- 
-    遊戲主容器
-    限制最大寬度為九宮格寬度，保持整體佈局緊湊
-    -->
+    <!-- 遊戲主容器 -->
     <div class="game-container">
-        <!-- 頂部控制欄 - 功能按鈕 -->
+        <!-- 頂部控制欄 -->
         <div class="controls-top">
-            <!-- 難易選擇下拉菜單 - 改為英文文字表示 -->
+            <!-- 難度選擇下拉選單 -->
             <select class="difficulty-select" id="difficulty">
-                <option value="Beginner">Beginner</option> <!-- 入門難度 -->
-                <option value="Easy" selected>Easy</option> <!-- 簡單難度（預設選中）-->
-                <option value="Medium">Medium</option> <!-- 中等難度 -->
-                <option value="Hard">Hard</option> <!-- 困難難度 -->
-                <option value="Expert">Expert</option> <!-- 專家難度 -->
+                <option value="Beginner">入門</option> <!-- 入門難度 -->
+                <option value="Easy" selected>簡單</option> <!-- 簡單難度（預設選擇） -->
+                <option value="Medium">中等</option> <!-- 中等難度 -->
+                <option value="Hard">困難</option> <!-- 困難難度 -->
+                <option value="Expert">專家</option> <!-- 專家難度 -->
             </select>
             
-            <!-- 新遊戲按鈕 - 使用系統內置符號 🔄 -->
-            <button class="icon-btn" id="btn-new-game" title="New Game">🔄</button>
-            
-            <!-- 筆記模式切換按鈕 - 使用系統內置符號 📝 -->
-            <button class="icon-btn" id="btn-notes" title="Notes Mode">📝</button>
-            
-            <!-- 提示按鈕 - 使用系統內置符號 💡 -->
-            <button class="icon-btn" id="btn-hint" title="Hint">💡</button>
-            
-            <!-- 音效開關按鈕 - 使用系統內置符號 🔊 或 🔇 -->
-            <button class="icon-btn" id="btn-sound" title="Sound">🔊</button>
+            <!-- 新遊戲按鈕 -->
+            <button class="icon-btn" id="btn-new-game" title="新遊戲">🔄</button>
+            <!-- 筆記模式按鈕 -->
+            <button class="icon-btn" id="btn-notes" title="筆記模式">📝</button>
+            <!-- 提示按鈕 -->
+            <button class="icon-btn" id="btn-hint" title="提示">💡</button>
+            <!-- 音效開關按鈕 -->
+            <button class="icon-btn" id="btn-sound" title="音效">🔊</button>
+            <!-- 語言切換按鈕 -->
+            <button class="icon-btn" id="btn-language" title="語言">🌐</button>
+            <!-- 主題切換按鈕 -->
+            <button class="icon-btn" id="btn-theme" title="主題">🌙</button>
         </div>
         
-        <!-- 狀態欄 - 計時器和統計信息 -->
+        <!-- 狀態欄 -->
         <div class="status-bar">
             <!-- 計時器容器 -->
             <div class="timer-container">
                 <!-- 計時器顯示 -->
                 <div class="timer" id="timer-display">00:00:00</div>
-                <!-- 暫停按鈕 - 使用系統內置符號 ⏸️ -->
+                <!-- 暫停按鈕 -->
                 <div class="pause-btn" id="pause-btn">⏸️</div>
             </div>
             
-            <!-- 統計信息 -->
+            <!-- 統計資訊 -->
             <div class="stats">
-                <!-- 錯誤次數統計 -->
+                <!-- 錯誤統計 -->
                 <div class="stat-item">
-                    <!-- 錯誤圖標 - 使用叉號圖標 ❌ -->
                     <div class="stat-icon error">❌</div>
-                    <!-- 錯誤計數顯示 -->
                     <span class="stat-value" id="error-stat">00</span>
                 </div>
-                <!-- 提示使用次數統計 -->
+                <!-- 提示統計 -->
                 <div class="stat-item">
-                    <!-- 提示圖標 - 使用燈泡圖標 💡 -->
                     <div class="stat-icon hint">💡</div>
-                    <!-- 提示計數顯示 -->
                     <span class="stat-value" id="hint-stat">00</span>
                 </div>
             </div>
@@ -890,62 +864,55 @@
         <!-- 數獨棋盤 -->
         <div id="sudoku-board"></div>
         
-        <!-- 數字鍵盤 - 改為長方形按鈕 -->
+        <!-- 數字鍵盤 -->
         <div class="keypad" id="keypad"></div>
     </div>
 
-    <!-- 勝利界面遮罩 - 使用英文文字和美觀設計 -->
+    <!-- 勝利畫面遮罩層 -->
     <div class="overlay" id="victory-overlay">
         <div class="modal victory-modal">
-            <!-- 聖誕燈裝飾 -->
+            <!-- 聖誕燈飾 -->
             <div class="christmas-lights" id="christmas-lights"></div>
-            
-            <!-- 勝利標題 - 使用英文 -->
-            <h2>Congratulations!</h2>
-            <!-- 耗時顯示 -->
-            <p id="victory-time-text">Time: 00:00:00</p>
-            <!-- 統計數據 -->
-            <p id="victory-stats">Errors: 00, Hints: 00</p>
-            <!-- 確定按鈕 - 使用英文 -->
-            <button class="modal-btn" onclick="closeOverlay()">OK</button>
+            <!-- 勝利標題 -->
+            <h2 id="victory-title">恭喜！</h2>
+            <!-- 勝利時間顯示 -->
+            <p id="victory-time-text">時間: 00:00:00</p>
+            <!-- 勝利統計顯示 -->
+            <p id="victory-stats">錯誤: 00, 提示: 00</p>
+            <!-- 勝利確定按鈕 -->
+            <button class="modal-btn" onclick="closeOverlay()" id="victory-ok-btn">確定</button>
         </div>
     </div>
 
-    <!-- 暫停界面遮罩 - 使用英文文字和美觀設計 -->
+    <!-- 暫停畫面遮罩層 -->
     <div class="overlay" id="pause-overlay">
         <div class="modal pause-modal">
-            <!-- 暫停標題 - 使用英文 -->
-            <h2>Game Paused</h2>
-            <!-- 暫停說明 - 使用英文 -->
-            <p>Click the button to continue</p>
-            <!-- 繼續按鈕 - 使用英文 -->
-            <button class="modal-btn" id="resume-btn">Resume</button>
+            <!-- 暫停標題 -->
+            <h2 id="pause-title">遊戲暫停</h2>
+            <!-- 暫停提示文字 -->
+            <p id="pause-text">點擊按鈕繼續</p>
+            <!-- 繼續遊戲按鈕 -->
+            <button class="modal-btn" id="resume-btn" id="resume-btn-text">繼續</button>
         </div>
     </div>
 
-    <!-- 聖經經文界面遮罩 - 顯示詩篇23篇 -->
+    <!-- 聖經內容遮罩層 -->
     <div class="overlay" id="bible-overlay">
         <div class="modal bible-modal">
-            <!-- 聖經經文標題 -->
-            <h2>詩篇 23篇</h2>
-            <!-- 聖經經文內容 -->
-            <div class="bible-content" id="bible-content">
-                <!-- 詩篇23篇內容將由JavaScript動態填充 -->
-            </div>
-            <!-- 關閉按鈕 -->
-            <button class="modal-btn" id="close-bible-btn">關閉</button>
+            <!-- 聖經標題 -->
+            <h2 id="bible-title">詩篇 23篇</h2>
+            <!-- 聖經內容容器 -->
+            <div class="bible-content" id="bible-content"></div>
+            <!-- 關閉聖經按鈕 -->
+            <button class="modal-btn" id="close-bible-btn" id="close-bible-text">關閉</button>
         </div>
     </div>
 
     <script>
-        // ======================================================================
         // 遊戲狀態變數定義
-        // ======================================================================
-
-        // 數獨相關數據
-        let board = [];          // 當前遊戲盤面（包含玩家輸入的數字）
-        let solution = [];       // 完整解答
-        let initial = [];        // 初始盤面（只包含預設的線索數字）
+        let board = [];          // 當前遊戲盤面，存儲玩家填寫的數字
+        let solution = [];       // 完整解答，存儲正確的數獨解答
+        let initial = [];        // 初始盤面，存儲遊戲開始時的數字（線索）
         let selectedCell = null; // 當前選中的單元格座標 {r, c}
 
         // 遊戲功能狀態
@@ -955,554 +922,605 @@
         let isPaused = false;     // 遊戲是否暫停
 
         // 數字統計
-        let counts = Array(10).fill(9); // 每個數字還需要填寫的數量（索引1-9對應數字1-9）
+        let counts = Array(10).fill(9); // 每個數字（1-9）剩餘可填寫的數量
 
         // 計時器相關
         let timerInterval = null; // 計時器間隔ID
-        let timeElapsed = 0;      // 已耗費的時間（秒）
+        let timeElapsed = 0;      // 經過的時間（秒）
 
         // 遊戲統計
-        let errorCount = 0; // 錯誤次數
-        let hintCount = 0;  // 提示使用次數
+        let errorCount = 0; // 錯誤計數
+        let hintCount = 0;  // 提示使用計數
 
-        // 慶祝動畫相關
-        let celebrationInterval = null; // 慶祝動畫間隔ID
-        
         // 秘密代碼相關變數
-        let secretCode = [8,5,8,9,3,8,6,1]; // 秘密代碼序列：85893861
-        let inputSequence = []; // 記錄玩家輸入的數字序列
-        let lastInputTime = 0; // 記錄最後一次輸入的時間，用於檢測輸入超時
-        let isFreshGame = true; // 標記是否為全新遊戲（沒有進行過任何數獨輸入）
+        let secretCode = [8,5,8,9,3,8,6,1]; // 觸發聖經內容的秘密代碼
+        let inputSequence = []; // 玩家輸入的數字序列
+        let lastInputTime = 0;  // 最後一次輸入的時間戳
+        let isFreshGame = true; // 是否是新遊戲（用於檢測秘密代碼）
 
-        // ======================================================================
+        // 語言設定
+        let currentLanguage = 'zh-TW'; // 當前語言，預設為繁體中文
+        const translations = {
+            'zh-TW': { // 繁體中文翻譯
+                difficulty: {
+                    'Beginner': '入門', // 入門難度
+                    'Easy': '簡單',     // 簡單難度
+                    'Medium': '中等',   // 中等難度
+                    'Hard': '困難',     // 困難難度
+                    'Expert': '專家'    // 專家難度
+                },
+                victoryTitle: '恭喜！', // 勝利標題
+                victoryTime: '時間',    // 勝利時間
+                victoryErrors: '錯誤',  // 勝利錯誤統計
+                victoryHints: '提示',   // 勝利提示統計
+                victoryOK: '確定',      // 勝利確定按鈕
+                pauseTitle: '遊戲暫停', // 暫停標題
+                pauseText: '點擊按鈕繼續', // 暫停提示文字
+                resume: '繼續',         // 繼續按鈕
+                bibleTitle: '詩篇 23篇', // 聖經標題
+                closeBible: '關閉',     // 關閉聖經按鈕
+                newGame: '新遊戲',      // 新遊戲按鈕提示
+                notesMode: '筆記模式',  // 筆記模式按鈕提示
+                hint: '提示',           // 提示按鈕提示
+                sound: '音效',          // 音效按鈕提示
+                language: '語言',       // 語言按鈕提示
+                theme: '主題'           // 主題按鈕提示
+            },
+            'zh-CN': { // 簡體中文翻譯
+                difficulty: {
+                    'Beginner': '入门',
+                    'Easy': '简单',
+                    'Medium': '中等',
+                    'Hard': '困难',
+                    'Expert': '专家'
+                },
+                victoryTitle: '恭喜！',
+                victoryTime: '时间',
+                victoryErrors: '错误',
+                victoryHints: '提示',
+                victoryOK: '确定',
+                pauseTitle: '游戏暂停',
+                pauseText: '点击按钮继续',
+                resume: '继续',
+                bibleTitle: '诗篇 23篇',
+                closeBible: '关闭',
+                newGame: '新游戏',
+                notesMode: '笔记模式',
+                hint: '提示',
+                sound: '音效',
+                language: '语言',
+                theme: '主题'
+            },
+            'en': { // 英文翻譯
+                difficulty: {
+                    'Beginner': 'Beginner',
+                    'Easy': 'Easy',
+                    'Medium': 'Medium',
+                    'Hard': 'Hard',
+                    'Expert': 'Expert'
+                },
+                victoryTitle: 'Congratulations!',
+                victoryTime: 'Time',
+                victoryErrors: 'Errors',
+                victoryHints: 'Hints',
+                victoryOK: 'OK',
+                pauseTitle: 'Game Paused',
+                pauseText: 'Click the button to continue',
+                resume: 'Resume',
+                bibleTitle: 'Psalm 23',
+                closeBible: 'Close',
+                newGame: 'New Game',
+                notesMode: 'Notes Mode',
+                hint: 'Hint',
+                sound: 'Sound',
+                language: 'Language',
+                theme: 'Theme'
+            }
+        };
+
+        // 主題設定
+        let currentTheme = 'light'; // 當前主題，預設為亮色主題
+
         // 音效系統
-        // ======================================================================
+        const AudioContext = window.AudioContext || window.webkitAudioContext; // 音頻上下文
+        let audioCtx = null; // 音頻上下文實例
 
-        // 使用Web Audio API創建音效上下文
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null; // 音頻上下文變數
-
-        /**
-         * 初始化音頻上下文
-         * 由於瀏覽器自動播放策略，需要在用戶交互後才能創建音頻上下文
-         */
+        // 初始化音效系統
         function initAudio() {
+            // 如果音頻上下文尚未初始化，則創建新的音頻上下文
             if (!audioCtx) {
                 audioCtx = new AudioContext();
             }
         }
 
-        /**
-         * 播放指定類型的音效
-         * @param {string} type - 音效類型：'correct', 'error', 'hint', 'ui', 'win'
-         * 每種音效使用不同的振盪器類型和頻率來產生不同的聲音效果
-         */
+        // 播放音效
         function playSound(type) {
-            // 如果音效關閉，直接返回
+            // 如果音效未啟用，則直接返回
             if (!soundEnabled) return;
             
-            // 確保音頻上下文已初始化
+            // 初始化音效系統
             if (!audioCtx) initAudio();
             
-            // 如果音頻上下文被暫停，恢復它（瀏覽器自動播放策略）
+            // 如果音頻上下文處於暫停狀態，則恢復
             if (audioCtx.state === 'suspended') audioCtx.resume();
             
-            const now = audioCtx.currentTime; // 獲取當前音頻時間
+            const now = audioCtx.currentTime; // 當前音頻時間
             
-            // 根據不同音效類型設置不同的音頻參數
+            // 根據音效類型播放不同的聲音
             switch (type) {
-                case 'correct': // 正確答案音效 - 簡短的高頻音
+                case 'correct': // 正確答案音效
                     const oscCorrect = audioCtx.createOscillator(); // 創建振盪器
                     const gainNodeCorrect = audioCtx.createGain(); // 創建增益節點
-                    oscCorrect.connect(gainNodeCorrect); // 連接振盪器到增益節點
-                    gainNodeCorrect.connect(audioCtx.destination); // 連接增益節點到輸出
+                    oscCorrect.connect(gainNodeCorrect); // 連接振盪器和增益節點
+                    gainNodeCorrect.connect(audioCtx.destination); // 連接增益節點和輸出
                     
-                    oscCorrect.type = 'sine'; // 使用正弦波
-                    oscCorrect.frequency.setValueAtTime(1000, now); // 設置頻率為1000Hz
-                    gainNodeCorrect.gain.setValueAtTime(0.3, now); // 設置增益為0.3
-                    gainNodeCorrect.gain.exponentialRampToValueAtTime(0.01, now + 0.1); // 指數衰減
+                    oscCorrect.type = 'sine'; // 正弦波
+                    oscCorrect.frequency.setValueAtTime(1000, now); // 設置頻率
+                    gainNodeCorrect.gain.setValueAtTime(0.3, now); // 設置增益
+                    gainNodeCorrect.gain.exponentialRampToValueAtTime(0.01, now + 0.1); // 增益衰減
                     oscCorrect.start(now); // 開始播放
-                    oscCorrect.stop(now + 0.1); // 0.1秒後停止
+                    oscCorrect.stop(now + 0.1); // 停止播放
                     break;
                     
-                case 'error': // 錯誤答案音效 - 低沉的下降音
-                    const oscError = audioCtx.createOscillator(); // 創建振盪器
-                    const gainNodeError = audioCtx.createGain(); // 創建增益節點
-                    oscError.connect(gainNodeError); // 連接振盪器到增益節點
-                    gainNodeError.connect(audioCtx.destination); // 連接增益節點到輸出
+                case 'error': // 錯誤答案音效
+                    const oscError = audioCtx.createOscillator();
+                    const gainNodeError = audioCtx.createGain();
+                    oscError.connect(gainNodeError);
+                    gainNodeError.connect(audioCtx.destination);
                     
-                    oscError.type = 'sawtooth'; // 使用鋸齒波
-                    oscError.frequency.setValueAtTime(150, now); // 設置頻率為150Hz
-                    oscError.frequency.linearRampToValueAtTime(100, now + 0.3); // 線性下降到100Hz
-                    gainNodeError.gain.setValueAtTime(0.2, now); // 設置增益為0.2
-                    gainNodeError.gain.exponentialRampToValueAtTime(0.01, now + 0.3); // 指數衰減
-                    oscError.start(now); // 開始播放
-                    oscError.stop(now + 0.3); // 0.3秒後停止
+                    oscError.type = 'sawtooth'; // 鋸齒波
+                    oscError.frequency.setValueAtTime(150, now);
+                    oscError.frequency.linearRampToValueAtTime(100, now + 0.3); // 頻率線性下降
+                    gainNodeError.gain.setValueAtTime(0.2, now);
+                    gainNodeError.gain.exponentialRampToValueAtTime(0.01, now + 0.3); // 增益衰減
+                    oscError.start(now);
+                    oscError.stop(now + 0.3);
                     break;
                     
-                case 'hint': // 提示音效 - 上升的三角波
-                    const oscHint = audioCtx.createOscillator(); // 創建振盪器
-                    const gainNodeHint = audioCtx.createGain(); // 創建增益節點
-                    oscHint.connect(gainNodeHint); // 連接振盪器到增益節點
-                    gainNodeHint.connect(audioCtx.destination); // 連接增益節點到輸出
+                case 'hint': // 提示音效
+                    const oscHint = audioCtx.createOscillator();
+                    const gainNodeHint = audioCtx.createGain();
+                    oscHint.connect(gainNodeHint);
+                    gainNodeHint.connect(audioCtx.destination);
                     
-                    oscHint.type = 'triangle'; // 使用三角波
-                    oscHint.frequency.setValueAtTime(300, now); // 設置頻率為300Hz
-                    oscHint.frequency.linearRampToValueAtTime(800, now + 0.3); // 線性上升到800Hz
-                    gainNodeHint.gain.setValueAtTime(0.1, now); // 設置增益為0.1
-                    gainNodeHint.gain.linearRampToValueAtTime(0, now + 0.3); // 線性衰減到0
-                    oscHint.start(now); // 開始播放
-                    oscHint.stop(now + 0.3); // 0.3秒後停止
+                    oscHint.type = 'triangle'; // 三角波
+                    oscHint.frequency.setValueAtTime(300, now);
+                    oscHint.frequency.linearRampToValueAtTime(800, now + 0.3); // 頻率線性上升
+                    gainNodeHint.gain.setValueAtTime(0.1, now);
+                    gainNodeHint.gain.linearRampToValueAtTime(0, now + 0.3); // 增益線性衰減
+                    oscHint.start(now);
+                    oscHint.stop(now + 0.3);
                     break;
                     
-                case 'ui': // UI交互音效 - 短促的方波
-                    const oscUI = audioCtx.createOscillator(); // 創建振盪器
-                    const gainNodeUI = audioCtx.createGain(); // 創建增益節點
-                    oscUI.connect(gainNodeUI); // 連接振盪器到增益節點
-                    gainNodeUI.connect(audioCtx.destination); // 連接增益節點到輸出
+                case 'ui': // 用戶界面音效
+                    const oscUI = audioCtx.createOscillator();
+                    const gainNodeUI = audioCtx.createGain();
+                    oscUI.connect(gainNodeUI);
+                    gainNodeUI.connect(audioCtx.destination);
                     
-                    oscUI.type = 'square'; // 使用方波
-                    oscUI.frequency.setValueAtTime(800, now); // 設置頻率為800Hz
-                    gainNodeUI.gain.setValueAtTime(0.05, now); // 設置增益為0.05
-                    gainNodeUI.gain.exponentialRampToValueAtTime(0.01, now + 0.05); // 指數衰減
-                    oscUI.start(now); // 開始播放
-                    oscUI.stop(now + 0.05); // 0.05秒後停止
+                    oscUI.type = 'square'; // 方波
+                    oscUI.frequency.setValueAtTime(800, now);
+                    gainNodeUI.gain.setValueAtTime(0.05, now);
+                    gainNodeUI.gain.exponentialRampToValueAtTime(0.01, now + 0.05); // 快速衰減
+                    oscUI.start(now);
+                    oscUI.stop(now + 0.05);
                     break;
                     
-                case 'win': // 勝利音效 - 五個連續的和弦聲音
-                    playChordSequence(now); // 播放和弦序列
+                case 'win': // 勝利音效
+                    playHappySound(now); // 播放歡快的勝利音效
                     break;
             }
         }
 
-        /**
-         * 播放和弦序列（五個和弦依次播放）
-         * @param {number} startTime - 開始時間
-         * 播放五個不同的和弦，每個和弦持續0.3秒，間隔0.1秒
-         */
-        function playChordSequence(startTime) {
-            if (!audioCtx) initAudio(); // 確保音頻上下文已初始化
+        // 播放歡快的勝利音效
+        function playHappySound(startTime) {
+            // 初始化音效系統
+            if (!audioCtx) initAudio();
             
-            // 定義五個不同的和弦（每個和弦由三個音符組成）
-            const chords = [
-                // C大三和弦：C(523.25Hz)、E(659.25Hz)、G(783.99Hz)
-                {freq1: 523.25, freq2: 659.25, freq3: 783.99},
-                // F大三和弦：F(349.23Hz)、A(440.00Hz)、C(523.25Hz)
-                {freq1: 349.23, freq2: 440.00, freq3: 523.25},
-                // G大三和弦：G(392.00Hz)、B(493.88Hz)、D(587.33Hz)
-                {freq1: 392.00, freq2: 493.88, freq3: 587.33},
-                // Am小三和弦：A(440.00Hz)、C(523.25Hz)、E(659.25Hz)
-                {freq1: 440.00, freq2: 523.25, freq3: 659.25},
-                // C大三和弦高八度：C(1046.50Hz)、E(1318.51Hz)、G(1567.98Hz)
-                {freq1: 1046.50, freq2: 1318.51, freq3: 1567.98}
+            // 歡快的音階序列
+            const melody = [
+                523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50,
+                987.77, 880.00, 783.99, 698.46, 659.25, 587.33, 523.25
             ];
             
-            // 依次播放五個和弦
-            chords.forEach((chord, index) => {
-                const chordTime = startTime + index * 0.4; // 每個和弦間隔0.4秒（0.3秒播放 + 0.1秒間隔）
-                playChord(chord.freq1, chord.freq2, chord.freq3, chordTime, 0.3); // 播放和弦，持續0.3秒
+            // 依次播放每個音符
+            melody.forEach((freq, index) => {
+                const noteTime = startTime + index * 0.1; // 計算每個音符的播放時間
+                playNote(freq, noteTime, 0.08); // 播放單個音符
             });
         }
 
-        /**
-         * 播放和弦（三個音符同時播放）
-         * @param {number} freq1 - 第一個音符的頻率（Hz）
-         * @param {number} freq2 - 第二個音符的頻率（Hz）
-         * @param {number} freq3 - 第三個音符的頻率（Hz）
-         * @param {number} time - 開始時間
-         * @param {number} duration - 持續時間（秒）
-         */
-        function playChord(freq1, freq2, freq3, time, duration) {
-            if (!audioCtx) initAudio(); // 確保音頻上下文已初始化
+        // 播放單個音符
+        function playNote(frequency, time, duration) {
+            // 初始化音效系統
+            if (!audioCtx) initAudio();
             
-            // 創建三個振盪器對應和弦的三個音符
-            const osc1 = audioCtx.createOscillator(); // 創建第一個振盪器
-            const osc2 = audioCtx.createOscillator(); // 創建第二個振盪器
-            const osc3 = audioCtx.createOscillator(); // 創建第三個振盪器
+            const oscillator = audioCtx.createOscillator(); // 創建振盪器
+            const gainNode = audioCtx.createGain(); // 創建增益節點
             
-            // 創建三個增益節點
-            const gain1 = audioCtx.createGain(); // 創建第一個增益節點
-            const gain2 = audioCtx.createGain(); // 創建第二個增益節點
-            const gain3 = audioCtx.createGain(); // 創建第三個增益節點
+            oscillator.connect(gainNode); // 連接振盪器和增益節點
+            gainNode.connect(audioCtx.destination); // 連接增益節點和輸出
             
-            // 連接振盪器到增益節點，再連接到輸出
-            osc1.connect(gain1); // 連接第一個振盪器到第一個增益節點
-            osc2.connect(gain2); // 連接第二個振盪器到第二個增益節點
-            osc3.connect(gain3); // 連接第三個振盪器到第三個增益節點
-            gain1.connect(audioCtx.destination); // 連接第一個增益節點到輸出
-            gain2.connect(audioCtx.destination); // 連接第二個增益節點到輸出
-            gain3.connect(audioCtx.destination); // 連接第三個增益節點到輸出
+            oscillator.type = 'sine'; // 正弦波
+            oscillator.frequency.setValueAtTime(frequency, time); // 設置頻率
             
-            // 設置振盪器類型為正弦波，產生純淨的音色
-            osc1.type = 'sine'; // 設置第一個振盪器為正弦波
-            osc2.type = 'sine'; // 設置第二個振盪器為正弦波
-            osc3.type = 'sine'; // 設置第三個振盪器為正弦波
+            gainNode.gain.setValueAtTime(0.1, time); // 設置增益
+            gainNode.gain.exponentialRampToValueAtTime(0.001, time + duration); // 增益衰減
             
-            // 設置三個振盪器的頻率
-            osc1.frequency.setValueAtTime(freq1, time); // 設置第一個振盪器頻率
-            osc2.frequency.setValueAtTime(freq2, time); // 設置第二個振盪器頻率
-            osc3.frequency.setValueAtTime(freq3, time); // 設置第三個振盪器頻率
-            
-            // 設置增益值，調整各音符的音量以獲得更好的平衡
-            gain1.gain.setValueAtTime(0.1, time); // 設置第一個增益節點增益值
-            gain2.gain.setValueAtTime(0.08, time); // 設置第二個增益節點增益值（稍低）
-            gain3.gain.setValueAtTime(0.08, time); // 設置第三個增益節點增益值（稍低）
-            
-            // 設置增益衰減，使音符平滑結束
-            gain1.gain.exponentialRampToValueAtTime(0.001, time + duration); // 第一個增益節點指數衰減
-            gain2.gain.exponentialRampToValueAtTime(0.001, time + duration); // 第二個增益節點指數衰減
-            gain3.gain.exponentialRampToValueAtTime(0.001, time + duration); // 第三個增益節點指數衰減
-            
-            // 開始播放三個音符
-            osc1.start(time); // 開始第一個振盪器
-            osc2.start(time); // 開始第二個振盪器
-            osc3.start(time); // 開始第三個振盪器
-            
-            // 在指定時間後停止三個音符
-            osc1.stop(time + duration); // 停止第一個振盪器
-            osc2.stop(time + duration); // 停止第二個振盪器
-            osc3.stop(time + duration); // 停止第三個振盪器
+            oscillator.start(time); // 開始播放
+            oscillator.stop(time + duration); // 停止播放
         }
 
-        /**
-         * 播放單個音符
-         * @param {number} freq - 頻率（Hz）
-         * @param {number} time - 開始時間
-         * @param {number} duration - 持續時間（秒）
-         */
-        function playNote(freq, time, duration) {
-            if (!audioCtx) initAudio(); // 確保音頻上下文已初始化
-            const osc = audioCtx.createOscillator(); // 創建振盪器
-            const gain = audioCtx.createGain(); // 創建增益節點
-            osc.connect(gain); // 連接振盪器到增益節點
-            gain.connect(audioCtx.destination); // 連接增益節點到輸出
-            osc.type = 'sine'; // 使用正弦波
-            osc.frequency.setValueAtTime(freq, time); // 設置頻率
-            gain.gain.setValueAtTime(0.1, time); // 設置增益
-            gain.gain.exponentialRampToValueAtTime(0.01, time + duration); // 指數衰減
-            osc.start(time); // 開始播放
-            osc.stop(time + duration); // 指定時間後停止
-        }
-
-        // ======================================================================
         // 初始化與事件監聽設置
-        // ======================================================================
-
-        /**
-         * DOM內容加載完成後初始化遊戲
-         * 這是整個遊戲的入口點，設置了所有必要的初始狀態
-         */
         document.addEventListener('DOMContentLoaded', () => {
             createBoardHTML(); // 創建數獨棋盤HTML結構
             createKeypadHTML(); // 創建數字鍵盤HTML結構
             startNewGame(); // 開始新遊戲
             setupEventListeners(); // 設置事件監聽器
-            loadBibleContent(); // 加載聖經經文內容
+            loadBibleContent(); // 加載聖經內容
+            updateUIForLanguage(); // 根據當前語言更新UI
         });
 
-        /**
-         * 設置所有事件監聽器
-         * 為所有用戶交互元素綁定對應的事件處理函數
-         */
+        // 設置事件監聽器
         function setupEventListeners() {
-            // 新遊戲按鈕 - 點擊時開始新遊戲
+            // 新遊戲按鈕點擊事件
             document.getElementById('btn-new-game').addEventListener('click', () => {
                 playSound('ui'); // 播放UI音效
                 startNewGame(); // 開始新遊戲
             });
             
-            // 筆記模式切換按鈕 - 點擊時切換筆記模式
+            // 筆記模式按鈕點擊事件
             document.getElementById('btn-notes').addEventListener('click', () => {
                 playSound('ui'); // 播放UI音效
                 toggleNotes(); // 切換筆記模式
             });
             
-            // 提示按鈕 - 點擊時使用提示功能
+            // 提示按鈕點擊事件
             document.getElementById('btn-hint').addEventListener('click', () => {
-                useHint(); // 使用提示功能
+                useHint(); // 使用提示
             });
             
-            // 音效切換按鈕 - 點擊時切換音效開關
+            // 音效開關按鈕點擊事件
             document.getElementById('btn-sound').addEventListener('click', () => {
                 playSound('ui'); // 播放UI音效
-                toggleSound(); // 切換音效開關
+                toggleSound(); // 切換音效狀態
             });
             
-            // 難度選擇下拉菜單 - 改變時開始新遊戲
+            // 語言按鈕點擊事件
+            document.getElementById('btn-language').addEventListener('click', () => {
+                playSound('ui'); // 播放UI音效
+                toggleLanguage(); // 切換語言
+            });
+            
+            // 主題按鈕點擊事件
+            document.getElementById('btn-theme').addEventListener('click', () => {
+                playSound('ui'); // 播放UI音效
+                toggleTheme(); // 切換主題
+            });
+            
+            // 難度選擇變化事件
             document.getElementById('difficulty').addEventListener('change', () => {
                 playSound('ui'); // 播放UI音效
                 startNewGame(); // 開始新遊戲
             });
             
-            // 暫停按鈕 - 點擊時切換暫停狀態
+            // 暫停按鈕點擊事件
             document.getElementById('pause-btn').addEventListener('click', () => {
                 togglePause(); // 切換暫停狀態
             });
             
-            // 繼續按鈕 - 點擊時恢復遊戲
+            // 繼續遊戲按鈕點擊事件
             document.getElementById('resume-btn').addEventListener('click', () => {
-                togglePause(); // 切換暫停狀態（恢復遊戲）
+                togglePause(); // 切換暫停狀態
             });
             
-            // 關閉聖經經文界面按鈕
+            // 關閉聖經按鈕點擊事件
             document.getElementById('close-bible-btn').addEventListener('click', () => {
-                closeBibleOverlay(); // 關閉聖經經文界面
+                closeBibleOverlay(); // 關閉聖經內容
             });
         }
 
-        // ======================================================================
-        // 遊戲核心功能
-        // ======================================================================
+        // 切換語言
+        function toggleLanguage() {
+            // 循環切換語言：繁體中文 -> 簡體中文 -> 英文 -> 繁體中文
+            if (currentLanguage === 'zh-TW') {
+                currentLanguage = 'zh-CN';
+            } else if (currentLanguage === 'zh-CN') {
+                currentLanguage = 'en';
+            } else {
+                currentLanguage = 'zh-TW';
+            }
+            
+            updateUIForLanguage(); // 根據新語言更新UI
+        }
 
-        /**
-         * 開始新遊戲
-         * 重置所有遊戲狀態並生成新的數獨謎題
-         */
+        // 根據當前語言更新UI
+        function updateUIForLanguage() {
+            const t = translations[currentLanguage]; // 獲取當前語言的翻譯
+            
+            // 更新難度選擇選項
+            const difficultySelect = document.getElementById('difficulty');
+            difficultySelect.innerHTML = ''; // 清空現有選項
+            
+            const difficulties = ['Beginner', 'Easy', 'Medium', 'Hard', 'Expert']; // 所有難度級別
+            // 為每個難度級別創建選項
+            difficulties.forEach(diff => {
+                const option = document.createElement('option');
+                option.value = diff;
+                option.textContent = t.difficulty[diff]; // 使用翻譯文本
+                difficultySelect.appendChild(option);
+            });
+            
+            // 設置當前選擇的難度為"簡單"
+            difficultySelect.value = 'Easy';
+            
+            // 更新勝利畫面文字
+            document.getElementById('victory-title').textContent = t.victoryTitle;
+            document.getElementById('victory-time-text').textContent = `${t.victoryTime}: 00:00:00`;
+            document.getElementById('victory-stats').textContent = `${t.victoryErrors}: 00, ${t.victoryHints}: 00`;
+            document.getElementById('victory-ok-btn').textContent = t.victoryOK;
+            
+            // 更新暫停畫面文字
+            document.getElementById('pause-title').textContent = t.pauseTitle;
+            document.getElementById('pause-text').textContent = t.pauseText;
+            document.getElementById('resume-btn').textContent = t.resume;
+            
+            // 更新聖經畫面文字
+            document.getElementById('bible-title').textContent = t.bibleTitle;
+            document.getElementById('close-bible-btn').textContent = t.closeBible;
+            
+            // 更新按鈕標題
+            document.getElementById('btn-new-game').title = t.newGame;
+            document.getElementById('btn-notes').title = t.notesMode;
+            document.getElementById('btn-hint').title = t.hint;
+            document.getElementById('btn-sound').title = t.sound;
+            document.getElementById('btn-language').title = t.language;
+            document.getElementById('btn-theme').title = t.theme;
+            
+            // 更新統計顯示
+            updateStats();
+        }
+
+        // 切換主題
+        function toggleTheme() {
+            if (currentTheme === 'light') {
+                currentTheme = 'dark'; // 切換到暗色主題
+                document.body.classList.add('dark-theme'); // 添加暗色主題類
+                document.getElementById('btn-theme').innerHTML = '☀️'; // 切換為太陽圖標
+                document.getElementById('btn-theme').title = '亮色主題'; // 更新按鈕提示
+            } else {
+                currentTheme = 'light'; // 切換到亮色主題
+                document.body.classList.remove('dark-theme'); // 移除暗色主題類
+                document.getElementById('btn-theme').innerHTML = '🌙'; // 切換為月亮圖標
+                document.getElementById('btn-theme').title = '暗色主題'; // 更新按鈕提示
+            }
+            
+            // 更新九宮格格線顏色
+            updateBoardBorders();
+        }
+
+        // 更新九宮格格線顏色
+        function updateBoardBorders() {
+            const cells = document.querySelectorAll('.cell'); // 獲取所有單元格
+            cells.forEach(cell => {
+                // 移除所有邊框類
+                cell.classList.remove('border-right', 'border-bottom');
+                
+                const r = parseInt(cell.dataset.r); // 獲取行索引
+                const c = parseInt(cell.dataset.c); // 獲取列索引
+                
+                // 重新添加邊框類
+                if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right'); // 右邊框
+                if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom'); // 下邊框
+            });
+        }
+
+        // 遊戲核心功能 - 開始新遊戲
         function startNewGame() {
-            // 如果遊戲暫停，先取消暫停
+            // 如果遊戲處於暫停狀態，則取消暫停
             if (isPaused) togglePause();
             
-            // 獲取選中的難度
-            const diff = document.getElementById('difficulty').value;
+            const diff = document.getElementById('difficulty').value; // 獲取選中的難度
             
-            // 生成新的數獨遊戲
-            generateSudoku(diff);
+            generateSudoku(diff); // 生成數獨遊戲
             
             // 重置遊戲狀態
-            gameOver = false; // 遊戲未結束
-            selectedCell = null; // 沒有選中單元格
-            errorCount = 0; // 錯誤次數歸零
-            hintCount = 0; // 提示使用次數歸零
+            gameOver = false;
+            selectedCell = null;
+            errorCount = 0;
+            hintCount = 0;
             
-            // 重置秘密代碼相關狀態
-            inputSequence = []; // 清空輸入序列
-            lastInputTime = 0; // 重置最後輸入時間
-            isFreshGame = true; // 標記為全新遊戲
+            // 重置秘密代碼相關變數
+            inputSequence = [];
+            lastInputTime = 0;
+            isFreshGame = true;
             
             // 更新UI
-            updateStats(); // 更新統計顯示
-            updateBoardUI(); // 更新棋盤UI
-            updateCounts(); // 更新數字統計
-            updateHighlighting(); // 更新高亮顯示
+            updateStats();
+            updateBoardUI();
+            updateCounts();
+            updateHighlighting();
             
-            // 開始計時
-            startTimer(); // 啟動計時器
+            startTimer(); // 開始計時
         }
 
-        /**
-         * 創建數獨棋盤的HTML結構
-         * 使用9x9網格佈局，並添加3x3宮格的粗邊框
-         * 每個單元格包含主數字顯示區域和筆記網格
-         */
+        // 創建數獨棋盤HTML結構
         function createBoardHTML() {
             const boardEl = document.getElementById('sudoku-board'); // 獲取棋盤元素
-            boardEl.innerHTML = ''; // 清空現有內容
+            boardEl.innerHTML = ''; // 清空棋盤
             
-            // 創建9x9網格
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
+            // 創建9x9的單元格
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
                     const cell = document.createElement('div'); // 創建單元格元素
-                    cell.className = 'cell'; // 設置類名
-                    cell.dataset.r = r; // 存儲行索引，用於後續識別單元格位置
-                    cell.dataset.c = c; // 存儲列索引，用於後續識別單元格位置
+                    cell.className = 'cell'; // 添加單元格類
+                    cell.dataset.r = r; // 設置行索引數據屬性
+                    cell.dataset.c = c; // 設置列索引數據屬性
                     
-                    // 添加3x3宮格的粗邊框，增強視覺結構
-                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right'); // 右側粗邊框
-                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom'); // 底部粗邊框
+                    // 添加九宮格邊框
+                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right');
+                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom');
                     
-                    // 創建筆記網格（用於顯示候選數字）
-                    const notesDiv = document.createElement('div'); // 創建筆記容器
-                    notesDiv.className = 'notes-grid'; // 設置類名
-                    for(let i = 1; i <= 9; i++) { // 創建1-9的筆記數字
-                        const note = document.createElement('div'); // 創建筆記數字元素
-                        note.className = 'note-num'; // 設置類名
-                        note.dataset.num = i; // 存儲數字值，用於後續識別和操作
-                        notesDiv.appendChild(note); // 添加到筆記容器
+                    // 創建筆記網格
+                    const notesDiv = document.createElement('div');
+                    notesDiv.className = 'notes-grid';
+                    // 創建9個筆記數字
+                    for(let i = 1; i <= 9; i++) {
+                        const note = document.createElement('div');
+                        note.className = 'note-num';
+                        note.dataset.num = i; // 設置數字數據屬性
+                        notesDiv.appendChild(note);
                     }
-                    cell.appendChild(notesDiv); // 將筆記容器添加到單元格
+                    cell.appendChild(notesDiv); // 將筆記網格添加到單元格
                     
                     // 創建主數字顯示區域
-                    const numSpan = document.createElement('span'); // 創建數字顯示元素
-                    numSpan.className = 'main-num'; // 設置類名
-                    cell.appendChild(numSpan); // 添加到單元格
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'main-num';
+                    cell.appendChild(numSpan); // 將數字顯示區域添加到單元格
                     
-                    // 添加點擊事件 - 點擊時選擇該單元格
-                    cell.addEventListener('click', () => selectCell(r, c)); // 綁定點擊事件
+                    // 添加單元格點擊事件
+                    cell.addEventListener('click', () => selectCell(r, c));
                     boardEl.appendChild(cell); // 將單元格添加到棋盤
                 }
             }
         }
 
-        /**
-         * 創建數字鍵盤的HTML結構 - 改為長方形按鈕
-         * 包含1-9的數字按鈕，用於玩家輸入數字
-         */
+        // 創建數字鍵盤HTML結構
         function createKeypadHTML() {
             const keypad = document.getElementById('keypad'); // 獲取數字鍵盤元素
-            keypad.innerHTML = ''; // 清空現有內容
+            keypad.innerHTML = ''; // 清空數字鍵盤
             
             // 創建1-9的數字按鈕
             for (let i = 1; i <= 9; i++) {
                 const btn = document.createElement('div'); // 創建按鈕元素
-                btn.className = 'numpad-btn'; // 設置類名
-                btn.id = `btn-num-${i}`; // 設置ID
-                btn.innerHTML = `<div class="num">${i}</div><div class="count">9</div>`; // 設置HTML內容
-                btn.addEventListener('click', () => handleInput(i)); // 綁定點擊事件
+                btn.className = 'numpad-btn'; // 添加數字按鈕類
+                btn.id = `btn-num-${i}`; // 設置按鈕ID
+                btn.innerHTML = `<div class="num">${i}</div><div class="count">9</div>`; // 設置按鈕內容
+                btn.addEventListener('click', () => handleInput(i)); // 添加點擊事件
                 keypad.appendChild(btn); // 將按鈕添加到數字鍵盤
             }
         }
 
-        /**
-         * 選擇單元格
-         * @param {number} r - 行索引
-         * @param {number} c - 列索引
-         * 當玩家點擊單元格時，將其設置為當前選中狀態並更新高亮顯示
-         */
+        // 選擇單元格
         function selectCell(r, c) {
-            // 如果遊戲結束或暫停，不處理選擇
+            // 如果遊戲結束或暫停，則不執行任何操作
             if (gameOver || isPaused) return;
             
-            // 設置當前選中的單元格
-            selectedCell = { r, c }; // 存儲選中單元格座標
+            selectedCell = { r, c }; // 設置當前選中的單元格
             
-            // 更新高亮顯示
             updateHighlighting(); // 更新高亮顯示
             
-            // 播放UI音效
             playSound('ui'); // 播放UI音效
         }
 
-        /**
-         * 處理數字輸入
-         * @param {number} num - 輸入的數字（1-9）
-         * 根據當前選中的單元格和輸入的數字，更新遊戲狀態
-         */
+        // 處理數字輸入
         function handleInput(num) {
-            // 如果遊戲結束或遊戲暫停，不處理輸入
+            // 如果遊戲結束或暫停，則不執行任何操作
             if (gameOver || isPaused) return;
             
-            // 檢查秘密代碼（無論是否有選中單元格都檢查）
-            checkSecretCode(num); // 檢查輸入的數字是否匹配秘密代碼
+            checkSecretCode(num); // 檢查秘密代碼
             
-            // 如果沒有選中單元格，只檢查秘密代碼，不進行數獨輸入
+            // 如果沒有選中的單元格，則不執行任何操作
             if (!selectedCell) return;
             
-            const { r, c } = selectedCell; // 解構選中單元格座標
+            const { r, c } = selectedCell; // 獲取選中單元格的座標
             
-            // 如果單元格是初始線索或已經正確填寫，不允許修改
+            // 如果是初始線索單元格或已正確填寫的單元格，則不允許修改
             if (initial[r][c] !== 0 || (board[r][c] !== 0 && board[r][c] === solution[r][c])) return;
             
             const cellDiv = getCellDiv(r, c); // 獲取單元格DOM元素
             
-            // 檢查答案是否正確
+            // 如果輸入的數字正確
             if (num === solution[r][c]) {
-                // 正確答案
                 board[r][c] = num; // 更新遊戲盤面
                 playSound('correct'); // 播放正確音效
                 updateBoardUI(); // 更新棋盤UI
-                updateCounts(); // 更新數字統計
+                updateCounts(); // 更新數字計數
                 updateHighlighting(); // 更新高亮顯示
-                checkWin(); // 檢查是否完成遊戲
+                checkWin(); // 檢查是否獲勝
                 
-                // 標記遊戲已經有輸入，不再接受秘密代碼
-                isFreshGame = false; // 設置為非全新遊戲
+                isFreshGame = false; // 標記遊戲已開始
             } else {
-                // 錯誤答案
+                // 輸入的數字錯誤
                 playSound('error'); // 播放錯誤音效
                 errorCount++; // 增加錯誤計數
                 updateStats(); // 更新統計顯示
                 
-                // 顯示錯誤動畫
-                cellDiv.querySelector('.main-num').innerText = num; // 顯示輸入的數字
+                // 顯示錯誤數字
+                cellDiv.querySelector('.main-num').innerText = num;
                 cellDiv.classList.add('error'); // 添加錯誤類
-                cellDiv.classList.add('filled'); // 添加已填充類
+                cellDiv.classList.add('filled'); // 添加已填寫類
                 
-                // 500毫秒後恢復正常顯示
+                // 0.5秒後恢復顯示
                 setTimeout(() => {
                     cellDiv.classList.remove('error'); // 移除錯誤類
-                    cellDiv.querySelector('.main-num').innerText = board[r][c] === 0 ? '' : board[r][c]; // 恢復原始顯示
-                    cellDiv.classList.remove('filled'); // 移除已填充類
+                    cellDiv.querySelector('.main-num').innerText = board[r][c] === 0 ? '' : board[r][c]; // 恢復顯示
+                    cellDiv.classList.remove('filled'); // 移除已填寫類
                     if (notesEnabled) updateNotes(); // 如果筆記模式啟用，更新筆記
-                }, 500); // 500毫秒後執行
+                }, 500);
                 
-                // 標記遊戲已經有輸入，不再接受秘密代碼
-                isFreshGame = false; // 設置為非全新遊戲
+                isFreshGame = false; // 標記遊戲已開始
             }
         }
 
-        /**
-         * 檢查秘密代碼輸入
-         * @param {number} num - 輸入的數字
-         * 檢查玩家輸入的數字序列是否匹配預設的秘密代碼
-         * 只有在遊戲剛開始且沒有任何數獨輸入時才有效
-         */
+        // 檢查秘密代碼
         function checkSecretCode(num) {
-            // 如果遊戲已經有輸入（非全新遊戲），不檢查秘密代碼
+            // 如果不是新遊戲，則不檢查秘密代碼
             if (!isFreshGame) return;
             
-            const currentTime = Date.now(); // 獲取當前時間
+            const currentTime = Date.now(); // 當前時間戳
             
-            // 如果兩次輸入間隔超過3秒，重置序列
-            if (currentTime - lastInputTime > 3000) { // 如果間隔超過3秒
-                inputSequence = []; // 清空輸入序列
+            // 如果距離上次輸入超過3秒，則重置輸入序列
+            if (currentTime - lastInputTime > 3000) {
+                inputSequence = [];
             }
             
-            // 記錄當前輸入和時間
             inputSequence.push(num); // 將輸入的數字添加到序列
             lastInputTime = currentTime; // 更新最後輸入時間
             
-            // 如果序列長度超過秘密代碼長度，移除最早的輸入
-            if (inputSequence.length > secretCode.length) { // 如果序列長度超過秘密代碼長度
-                inputSequence.shift(); // 移除序列中的第一個元素
+            // 如果序列長度超過秘密代碼長度，則移除第一個元素
+            if (inputSequence.length > secretCode.length) {
+                inputSequence.shift();
             }
             
-            // 檢查序列是否匹配秘密代碼
-            if (inputSequence.length === secretCode.length) { // 如果序列長度等於秘密代碼長度
-                let isMatch = true; // 匹配標誌
+            // 如果序列長度等於秘密代碼長度
+            if (inputSequence.length === secretCode.length) {
+                let isMatch = true; // 匹配標記
                 
-                // 逐個比較序列中的數字
-                for (let i = 0; i < secretCode.length; i++) { // 遍歷序列中的每個數字
-                    if (inputSequence[i] !== secretCode[i]) { // 如果數字不匹配
-                        isMatch = false; // 設置為不匹配
-                        break; // 跳出循環
+                // 檢查序列是否與秘密代碼匹配
+                for (let i = 0; i < secretCode.length; i++) {
+                    if (inputSequence[i] !== secretCode[i]) {
+                        isMatch = false; // 不匹配
+                        break;
                     }
                 }
                 
-                // 如果匹配成功，顯示聖經經文
-                if (isMatch) { // 如果序列匹配秘密代碼
-                    showBibleOverlay(); // 顯示聖經經文界面
+                // 如果匹配，顯示聖經內容
+                if (isMatch) {
+                    showBibleOverlay(); // 顯示聖經內容
                     inputSequence = []; // 重置輸入序列
-                    isFreshGame = false; // 標記遊戲已經有輸入，不再接受秘密代碼
+                    isFreshGame = false; // 標記遊戲已開始
                 }
             }
         }
 
-        /**
-         * 顯示聖經經文界面
-         * 顯示詩篇23篇的完整內容
-         */
+        // 顯示聖經內容
         function showBibleOverlay() {
-            document.getElementById('bible-overlay').style.display = 'flex'; // 顯示聖經經文界面
+            document.getElementById('bible-overlay').style.display = 'flex'; // 顯示聖經內容遮罩層
             playSound('ui'); // 播放UI音效
         }
 
-        /**
-         * 關閉聖經經文界面
-         * 隱藏聖經經文界面，返回遊戲
-         */
+        // 關閉聖經內容
         function closeBibleOverlay() {
-            document.getElementById('bible-overlay').style.display = 'none'; // 隱藏聖經經文界面
+            document.getElementById('bible-overlay').style.display = 'none'; // 隱藏聖經內容遮罩層
             playSound('ui'); // 播放UI音效
         }
 
-        /**
-         * 加載聖經經文內容
-         * 將詩篇23篇的內容填充到聖經經文界面
-         */
+        // 加載聖經內容
         function loadBibleContent() {
-            const bibleContent = document.getElementById('bible-content'); // 獲取聖經經文內容元素
+            const bibleContent = document.getElementById('bible-content'); // 獲取聖經內容容器
             
-            // 詩篇23篇全文（使用凸排排版）
+            // 詩篇23篇內容
             const psalms23 = [
                 { number: 1, text: "耶和華是我的牧者，我必不致缺乏。" },
                 { number: 2, text: "他使我躺臥在青草地上，領我在可安歇的水邊。" },
@@ -1512,431 +1530,349 @@
                 { number: 6, text: "我一生一世必有恩惠慈愛隨著我；我且要住在耶和華的殿中，直到永遠。" }
             ];
             
-            // 清空現有內容
-            bibleContent.innerHTML = '';
+            bibleContent.innerHTML = ''; // 清空聖經內容容器
             
-            // 將每節經文添加到內容中
-            psalms23.forEach(verse => { // 遍歷每節經文
-                const verseElement = document.createElement('div'); // 創建經文元素
-                verseElement.className = 'bible-verse'; // 設置類名
+            // 為每節經文創建DOM元素
+            psalms23.forEach(verse => {
+                const verseElement = document.createElement('div');
+                verseElement.className = 'bible-verse';
                 
-                // 創建節號元素
-                const verseNumber = document.createElement('span'); // 創建節號元素
-                verseNumber.className = 'verse-number'; // 設置類名
-                verseNumber.textContent = verse.number + '.'; // 設置節號內容
+                const verseNumber = document.createElement('span');
+                verseNumber.className = 'verse-number';
+                verseNumber.textContent = verse.number + '.'; // 經文編號
                 
-                // 創建經文文本元素
-                const verseText = document.createElement('span'); // 創建經文文本元素
-                verseText.textContent = verse.text; // 設置經文文本內容
+                const verseText = document.createElement('span');
+                verseText.textContent = verse.text; // 經文內容
                 
-                // 將節號和經文文本添加到經文元素
-                verseElement.appendChild(verseNumber); // 添加節號
-                verseElement.appendChild(verseText); // 添加經文文本
+                verseElement.appendChild(verseNumber); // 添加經文編號
+                verseElement.appendChild(verseText); // 添加經文內容
                 
-                bibleContent.appendChild(verseElement); // 將經文元素添加到內容容器
+                bibleContent.appendChild(verseElement); // 將經文添加到容器
             });
         }
 
-        /**
-         * 更新統計顯示
-         * 更新錯誤次數和提示使用次數的顯示
-         */
+        // 更新統計顯示
         function updateStats() {
-            // 使用padStart確保兩位數顯示
-            document.getElementById('error-stat').innerText = errorCount.toString().padStart(2, '0'); // 更新錯誤次數顯示
-            document.getElementById('hint-stat').innerText = hintCount.toString().padStart(2, '0'); // 更新提示次數顯示
+            const t = translations[currentLanguage]; // 獲取當前語言的翻譯
             
-            // 同時更新勝利界面的統計顯示
-            document.getElementById('victory-stats').innerText = `Errors: ${errorCount.toString().padStart(2, '0')}, Hints: ${hintCount.toString().padStart(2, '0')}`; // 更新勝利界面統計顯示
+            // 更新錯誤統計顯示
+            document.getElementById('error-stat').innerText = errorCount.toString().padStart(2, '0');
+            // 更新提示統計顯示
+            document.getElementById('hint-stat').innerText = hintCount.toString().padStart(2, '0');
+            
+            // 更新勝利畫面統計顯示
+            document.getElementById('victory-stats').innerText = `${t.victoryErrors}: ${errorCount.toString().padStart(2, '0')}, ${t.victoryHints}: ${hintCount.toString().padStart(2, '0')}`;
         }
 
-        /**
-         * 開始計時器
-         * 初始化計時器並每秒更新時間顯示
-         */
+        // 開始計時器
         function startTimer() {
             stopTimer(); // 停止現有計時器
-            timeElapsed = 0; // 重置已耗費時間
+            timeElapsed = 0; // 重置經過時間
             isPaused = false; // 取消暫停狀態
-            updateTimerDisplay(); // 更新時間顯示
+            updateTimerDisplay(); // 更新計時器顯示
             
-            // 每秒更新一次時間顯示
+            // 每秒更新一次計時器
             timerInterval = setInterval(() => {
-                if (!isPaused && !gameOver) { // 如果遊戲未暫停且未結束
-                    timeElapsed++; // 增加已耗費時間
-                    updateTimerDisplay(); // 更新時間顯示
+                // 如果遊戲未暫停且未結束，則增加經過時間
+                if (!isPaused && !gameOver) {
+                    timeElapsed++;
+                    updateTimerDisplay(); // 更新計時器顯示
                 }
-            }, 1000); // 每秒執行一次
+            }, 1000);
         }
 
-        /**
-         * 停止計時器
-         * 清除計時器間隔，停止計時
-         */
+        // 停止計時器
         function stopTimer() {
-            if (timerInterval) { // 如果計時器間隔存在
-                clearInterval(timerInterval); // 清除計時器間隔
-                timerInterval = null; // 重置計時器間隔變數
+            // 如果計時器正在運行，則清除它
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
             }
         }
 
-        /**
-         * 更新時間顯示
-         * 將秒數轉換為時:分:秒格式並更新顯示
-         * @returns {string} 格式化後的時間字符串
-         */
+        // 更新計時器顯示
         function updateTimerDisplay() {
-            const hours = Math.floor(timeElapsed / 3600); // 計算小時數
-            const minutes = Math.floor((timeElapsed % 3600) / 60); // 計算分鐘數
+            const t = translations[currentLanguage]; // 獲取當前語言的翻譯
+            const hours = Math.floor(timeElapsed / 3600); // 計算小時
+            const minutes = Math.floor((timeElapsed % 3600) / 60); // 計算分鐘
             const seconds = timeElapsed % 60; // 計算秒數
-            const text = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; // 格式化時間字符串
-            document.getElementById('timer-display').innerText = text; // 更新時間顯示
-            // 同時更新勝利界面的時間顯示
-            document.getElementById('victory-time-text').innerText = `Time: ${text}`; // 更新勝利界面時間顯示
-            return text; // 返回格式化後的時間字符串
+            // 格式化時間字符串
+            const text = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = text; // 更新主計時器顯示
+            document.getElementById('victory-time-text').innerText = `${t.victoryTime}: ${text}`; // 更新勝利畫面計時器顯示
+            return text; // 返回格式化時間字符串
         }
 
-        /**
-         * 切換暫停狀態
-         * 暫停或恢復遊戲
-         */
+        // 切換暫停狀態
         function togglePause() {
             isPaused = !isPaused; // 切換暫停狀態
             
             if (isPaused) {
-                // 暫停遊戲
-                document.getElementById('pause-overlay').style.display = 'flex'; // 顯示暫停界面
-                document.getElementById('sudoku-board').classList.add('blurred'); // 添加模糊效果
+                // 如果暫停，顯示暫停畫面
+                document.getElementById('pause-overlay').style.display = 'flex';
+                document.getElementById('sudoku-board').classList.add('blurred'); // 模糊棋盤
                 playSound('ui'); // 播放UI音效
             } else {
-                // 恢復遊戲
-                document.getElementById('pause-overlay').style.display = 'none'; // 隱藏暫停界面
-                document.getElementById('sudoku-board').classList.remove('blurred'); // 移除模糊效果
+                // 如果取消暫停，隱藏暫停畫面
+                document.getElementById('pause-overlay').style.display = 'none';
+                document.getElementById('sudoku-board').classList.remove('blurred'); // 取消模糊棋盤
                 playSound('ui'); // 播放UI音效
             }
         }
 
-        // ======================================================================
         // 數獨生成與驗證算法
-        // ======================================================================
-
-        /**
-         * 根據難度生成數獨遊戲
-         * @param {string} difficulty - 難度級別：'Beginner', 'Easy', 'Medium', 'Hard', 'Expert'
-         * 使用回溯算法生成完整解答，然後根據難度移除一定數量的數字
-         */
+        // 生成數獨遊戲
         function generateSudoku(difficulty) {
-            // 初始化空白盤面
-            board = Array.from({ length: 9 }, () => Array(9).fill(0)); // 創建9x9的二維數組，全部填充0
+            board = Array.from({ length: 9 }, () => Array(9).fill(0)); // 初始化空棋盤
             
-            // 先填充對角線的三個3x3宮格（這樣可以確保不衝突）
-            fillDiagonal(); // 填充對角線宮格
+            fillDiagonal(); // 填充對角線區域
             
-            // 使用回溯算法解決完整的數獨
-            solveSudoku(board); // 解決數獨
+            solveSudoku(board); // 解數獨
             
-            // 保存完整解答
-            solution = JSON.parse(JSON.stringify(board)); // 深拷貝解答
+            solution = JSON.parse(JSON.stringify(board)); // 保存解答
             
-            // 根據難度決定移除多少數字（數字越少難度越高）
-            let attempts = 0; // 移除數字嘗試次數
+            let attempts = 0; // 根據難度設置挖空數量
             switch(difficulty) {
-                case 'Beginner': attempts = 20; break; // 入門 - 移除20個數字
-                case 'Easy': attempts = 30; break;     // 簡單 - 移除30個數字
-                case 'Medium': attempts = 40; break;   // 中等 - 移除40個數字
-                case 'Hard': attempts = 50; break;     // 困難 - 移除50個數字
-                case 'Expert': attempts = 58; break;   // 專家 - 移除58個數字
+                case 'Beginner': attempts = 20; break; // 入門難度：20個空
+                case 'Easy': attempts = 30; break;     // 簡單難度：30個空
+                case 'Medium': attempts = 40; break;   // 中等難度：40個空
+                case 'Hard': attempts = 50; break;     // 困難難度：50個空
+                case 'Expert': attempts = 58; break;   // 專家難度：58個空
             }
             
-            // 保存初始盤面（包含線索數字）
-            initial = JSON.parse(JSON.stringify(solution)); // 深拷貝初始盤面
+            initial = JSON.parse(JSON.stringify(solution)); // 保存初始盤面
             
-            // 重置玩家盤面
-            board = Array.from({ length: 9 }, () => Array(9).fill(0)); // 創建空白玩家盤面
+            board = Array.from({ length: 9 }, () => Array(9).fill(0)); // 重置棋盤
             
-            // 隨機移除指定數量的數字
-            let removed = 0; // 已移除數字計數
-            while (removed < attempts) { // 循環直到移除足夠數字
-                let row = Math.floor(Math.random() * 9); // 隨機行索引
-                let col = Math.floor(Math.random() * 9); // 隨機列索引
+            let removed = 0; // 已挖空計數
+            // 隨機挖空
+            while (removed < attempts) {
+                let row = Math.floor(Math.random() * 9); // 隨機行
+                let col = Math.floor(Math.random() * 9); // 隨機列
                 
-                // 如果該位置有數字，移除它
-                if (initial[row][col] !== 0) { // 如果該位置有數字
-                    initial[row][col] = 0; // 移除數字
-                    removed++; // 增加已移除計數
+                // 如果該位置有數字，則挖空
+                if (initial[row][col] !== 0) {
+                    initial[row][col] = 0;
+                    removed++;
                 }
             }
         }
 
-        /**
-         * 填充對角線的三個3x3宮格
-         * 這三個宮格互不影響，可以獨立填充，確保初始狀態有效
-         */
+        // 填充對角線區域
         function fillDiagonal() {
-            for (let i = 0; i < 9; i += 3) { // 遍歷對角線的三個宮格
-                fillBox(i, i); // 填充每個3x3宮格
+            for (let i = 0; i < 9; i += 3) {
+                fillBox(i, i); // 填充3x3盒子
             }
         }
 
-        /**
-         * 填充指定的3x3宮格
-         * @param {number} row - 宮格起始行
-         * @param {number} col - 宮格起始列
-         * 隨機生成數字填充3x3宮格，確保宮格內數字不重複
-         */
+        // 填充3x3盒子
         function fillBox(row, col) {
-            let num; // 數字變數
-            for (let i = 0; i < 3; i++) { // 遍歷宮格的行
-                for (let j = 0; j < 3; j++) { // 遍歷宮格的列
-                    // 隨機生成數字，直到找到一個可用的
+            let num;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    // 隨機生成數字，直到找到安全的數字
                     do {
-                        num = Math.floor(Math.random() * 9) + 1; // 生成1-9的隨機數字
-                    } while (!isSafeInBox(row, col, num)); // 檢查數字是否可用
+                        num = Math.floor(Math.random() * 9) + 1;
+                    } while (!isSafeInBox(row, col, num));
                     
-                    board[row + i][col + j] = num; // 放置數字到盤面
+                    board[row + i][col + j] = num; // 放置數字
                 }
             }
         }
 
-        /**
-         * 檢查數字在指定3x3宮格中是否安全（不重複）
-         * @param {number} rowStart - 宮格起始行
-         * @param {number} colStart - 宮格起始列
-         * @param {number} num - 要檢查的數字
-         * @returns {boolean} 是否安全
-         */
+        // 檢查數字在3x3盒子中是否安全
         function isSafeInBox(rowStart, colStart, num) {
-            for (let i = 0; i < 3; i++) { // 遍歷宮格的行
-                for (let j = 0; j < 3; j++) { // 遍歷宮格的列
-                    if (board[rowStart + i][colStart + j] === num) return false; // 如果數字已存在，返回不安全
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    // 如果數字已存在，則不安全
+                    if (board[rowStart + i][colStart + j] === num) return false;
                 }
             }
-            return true; // 數字安全，返回true
+            return true; // 數字安全
         }
 
-        /**
-         * 使用回溯算法解決數獨
-         * @param {Array} grid - 數獨盤面
-         * @returns {boolean} 是否成功解決
-         * 這是經典的回溯算法實現，用於生成數獨解答
-         */
+        // 解數獨（回溯算法）
         function solveSudoku(grid) {
-            for (let row = 0; row < 9; row++) { // 遍歷每一行
-                for (let col = 0; col < 9; col++) { // 遍歷每一列
-                    // 找到空白單元格
-                    if (grid[row][col] === 0) { // 如果單元格為空白
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    // 如果單元格為空
+                    if (grid[row][col] === 0) {
                         // 嘗試1-9的數字
-                        for (let num = 1; num <= 9; num++) { // 嘗試數字1-9
-                            // 檢查數字是否安全
-                            if (isSafe(grid, row, col, num)) { // 如果數字安全
-                                // 放置數字
-                                grid[row][col] = num; // 放置數字到盤面
+                        for (let num = 1; num <= 9; num++) {
+                            // 如果數字安全
+                            if (isSafe(grid, row, col, num)) {
+                                grid[row][col] = num; // 放置數字
                                 
-                                // 遞歸嘗試解決剩下的盤面
-                                if (solveSudoku(grid)) return true; // 如果遞歸解決成功，返回true
+                                // 遞歸解決剩下的部分
+                                if (solveSudoku(grid)) return true;
                                 
-                                // 如果遞歸失敗，回溯（重置單元格）
-                                grid[row][col] = 0; // 重置單元格
+                                grid[row][col] = 0; // 回溯
                             }
                         }
-                        // 如果所有數字都嘗試過但都不行，返回失敗
-                        return false; // 返回失敗
+                        return false; // 無解
                     }
                 }
             }
-            // 所有單元格都已填滿，解決成功
-            return true; // 返回成功
+            return true; // 解決完成
         }
 
-        /**
-         * 檢查數字在指定位置是否安全
-         * @param {Array} grid - 數獨盤面
-         * @param {number} row - 行索引
-         * @param {number} col - 列索引
-         * @param {number} num - 要檢查的數字
-         * @returns {boolean} 是否安全
-         * 檢查行、列和3x3宮格中是否有重複數字
-         */
+        // 檢查數字在行、列和3x3盒子中是否安全
         function isSafe(grid, row, col, num) {
-            // 檢查行和列
-            for (let x = 0; x < 9; x++) { // 遍歷行和列
-                if (grid[row][x] === num || grid[x][col] === num) return false; // 如果行或列中有重複數字，返回不安全
+            // 檢查行
+            for (let x = 0; x < 9; x++) {
+                if (grid[row][x] === num) return false;
             }
             
-            // 檢查3x3宮格
-            let startRow = row - row % 3; // 計算宮格起始行
-            let startCol = col - col % 3; // 計算宮格起始列
-            for (let i = 0; i < 3; i++) { // 遍歷宮格的行
-                for (let j = 0; j < 3; j++) { // 遍歷宮格的列
-                    if (grid[i + startRow][j + startCol] === num) return false; // 如果宮格中有重複數字，返回不安全
+            // 檢查列
+            for (let x = 0; x < 9; x++) {
+                if (grid[x][col] === num) return false;
+            }
+            
+            // 檢查3x3盒子
+            let startRow = row - row % 3;
+            let startCol = col - col % 3;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (grid[i + startRow][j + startCol] === num) return false;
                 }
             }
-            return true; // 數字安全，返回true
+            return true; // 數字安全
         }
 
-        /**
-         * 使用提示功能（自動填入一個正確數字）
-         * 隨機選擇一個空白單元格並填入正確答案
-         */
+        // 使用提示功能
         function useHint() {
-            // 如果遊戲結束或暫停，不提供提示
+            // 如果遊戲結束或暫停，則不執行任何操作
             if (gameOver || isPaused) return;
             
-            // 收集所有空白單元格
-            const emptyCells = []; // 空白單元格數組
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
-                    if (board[r][c] === 0 && initial[r][c] === 0) { // 如果單元格是空白且不是初始線索
-                        emptyCells.push({r, c}); // 添加到空白單元格數組
+            const emptyCells = []; // 空單元格列表
+            // 收集所有空單元格
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (board[r][c] === 0 && initial[r][c] === 0) {
+                        emptyCells.push({r, c});
                     }
                 }
             }
             
-            // 如果沒有空白單元格，直接返回
+            // 如果沒有空單元格，則不執行任何操作
             if (emptyCells.length === 0) return;
             
-            // 增加提示計數並更新顯示
             hintCount++; // 增加提示計數
             updateStats(); // 更新統計顯示
             
-            // 隨機選擇一個空白單元格
-            const { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)]; // 隨機選擇空白單元格
+            // 隨機選擇一個空單元格
+            const { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const correctNum = solution[r][c]; // 獲取正確數字
             
-            // 填入正確答案
-            board[r][c] = solution[r][c]; // 填入正確答案
+            board[r][c] = correctNum; // 更新遊戲盤面
             updateBoardUI(); // 更新棋盤UI
             
-            // 添加提示動畫效果
             const cellDiv = getCellDiv(r, c); // 獲取單元格DOM元素
-            cellDiv.classList.add('hinting'); // 添加提示動畫類
+            cellDiv.classList.add('hinting'); // 添加提示效果類
+            // 2秒後移除提示效果
             setTimeout(() => {
-                if (cellDiv) cellDiv.classList.remove('hinting'); // 移除提示動畫類
-            }, 2000); // 2秒後執行
+                if (cellDiv) cellDiv.classList.remove('hinting');
+            }, 2000);
             
-            // 播放提示音效
             playSound('hint'); // 播放提示音效
             
-            // 更新UI
-            updateCounts(); // 更新數字統計
+            updateCounts(); // 更新數字計數
             updateHighlighting(); // 更新高亮顯示
             
-            // 檢查是否完成遊戲
-            checkWin(); // 檢查是否完成遊戲
+            checkWin(); // 檢查是否獲勝
             
-            // 標記遊戲已經有輸入，不再接受秘密代碼
-            isFreshGame = false; // 設置為非全新遊戲
+            isFreshGame = false; // 標記遊戲已開始
         }
 
-        /**
-         * 獲取指定單元格的DOM元素
-         * @param {number} r - 行索引
-         * @param {number} c - 列索引
-         * @returns {HTMLElement} 單元格DOM元素
-         */
+        // 根據座標獲取單元格DOM元素
         function getCellDiv(r, c) {
-            return document.querySelector(`.cell[data-r='${r}'][data-c='${c}']`); // 使用屬性選擇器獲取單元格
+            return document.querySelector(`.cell[data-r='${r}'][data-c='${c}']`);
         }
 
-        /**
-         * 更新數獨盤面UI
-         * 根據當前遊戲狀態更新所有單元格的顯示
-         */
+        // 更新棋盤UI
         function updateBoardUI() {
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
                     const cell = getCellDiv(r, c); // 獲取單元格DOM元素
                     
-                    // 獲取單元格的值（玩家輸入或初始線索）
-                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c]; // 優先使用玩家輸入，否則使用初始線索
+                    // 獲取單元格的值（玩家填寫的數字或初始線索）
+                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
                     
-                    // 更新主數字顯示
-                    cell.querySelector('.main-num').innerText = val === 0 ? '' : val; // 如果值為0則顯示空字符串，否則顯示數字
+                    cell.querySelector('.main-num').innerText = val === 0 ? '' : val; // 更新數字顯示
                     
-                    // 重置單元格類
-                    cell.className = 'cell'; // 重置類名
+                    cell.className = 'cell'; // 重置單元格類
                     
-                    // 添加3x3宮格邊框
-                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right'); // 右側粗邊框
-                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom'); // 底部粗邊框
+                    // 添加九宮格邊框
+                    if ((c + 1) % 3 === 0 && c !== 8) cell.classList.add('border-right');
+                    if ((r + 1) % 3 === 0 && r !== 8) cell.classList.add('border-bottom');
                     
-                    // 設置單元格類型
-                    if (initial[r][c] !== 0) { // 如果是初始線索
-                        cell.classList.add('clue'); // 添加線索類
-                    } else if (board[r][c] !== 0) { // 如果是玩家填寫的數字
-                        cell.classList.add('filled'); // 添加已填充類
+                    // 根據單元格類型添加相應類
+                    if (initial[r][c] !== 0) {
+                        cell.classList.add('clue'); // 初始線索單元格
+                    } else if (board[r][c] !== 0) {
+                        cell.classList.add('filled'); // 玩家填寫的單元格
                     }
                 }
             }
             
-            // 如果筆記模式啟用，更新筆記顯示
-            if (notesEnabled) updateNotes(); // 更新筆記顯示
-            else clearNotes(); // 清除筆記顯示
+            // 如果筆記模式啟用，更新筆記
+            if (notesEnabled) updateNotes();
+            else clearNotes(); // 否則清除筆記
         }
 
-        /**
-         * 切換筆記模式
-         * 筆記模式允許玩家在單元格中標記候選數字
-         */
+        // 切換筆記模式
         function toggleNotes() {
-            if (isPaused) return; // 如果遊戲暫停，不處理
+            // 如果遊戲暫停，則不執行任何操作
+            if (isPaused) return;
             
-            // 切換筆記模式狀態
             notesEnabled = !notesEnabled; // 切換筆記模式狀態
             
-            // 更新按鈕顏色
-            const notesBtn = document.getElementById('btn-notes'); // 獲取筆記按鈕
-            if (notesEnabled) { // 如果筆記模式啟用
-                notesBtn.classList.add('btn-on'); // 添加開啟狀態類
-                notesBtn.classList.remove('btn-secondary'); // 移除次要按鈕類
-            } else { // 如果筆記模式關閉
-                notesBtn.classList.remove('btn-on'); // 移除開啟狀態類
-                notesBtn.classList.add('btn-secondary'); // 添加次要按鈕類
+            const notesBtn = document.getElementById('btn-notes'); // 獲取筆記模式按鈕
+            // 更新按鈕樣式
+            if (notesEnabled) {
+                notesBtn.classList.add('btn-on'); // 開啟狀態
+                notesBtn.classList.remove('btn-secondary'); // 移除次要狀態
+            } else {
+                notesBtn.classList.remove('btn-on'); // 關閉狀態
+                notesBtn.classList.add('btn-secondary'); // 添加次要狀態
             }
             
-            // 更新筆記顯示
-            if (notesEnabled) updateNotes(); // 更新筆記顯示
-            else clearNotes(); // 清除筆記顯示
+            // 根據筆記模式狀態更新筆記顯示
+            if (notesEnabled) updateNotes();
+            else clearNotes();
             
-            // 更新高亮顯示
             updateHighlighting(); // 更新高亮顯示
         }
 
-        /**
-         * 清除所有筆記
-         * 清空所有單元格中的候選數字顯示
-         */
+        // 清除所有筆記
         function clearNotes() {
             document.querySelectorAll('.note-num').forEach(el => el.innerText = ''); // 清空所有筆記數字
         }
 
-        /**
-         * 更新筆記顯示
-         * 顯示每個空白單元格中可能的候選數字
-         * 候選數字是根據當前盤面狀態計算得出的可能正確的數字
-         */
+        // 更新筆記
         function updateNotes() {
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
                     const cell = getCellDiv(r, c); // 獲取單元格DOM元素
                     const noteContainer = cell.querySelector('.notes-grid'); // 獲取筆記容器
                     
-                    // 清空現有筆記
-                    noteContainer.querySelectorAll('.note-num').forEach(n => n.innerText = ''); // 清空筆記數字
+                    // 清空所有筆記數字
+                    noteContainer.querySelectorAll('.note-num').forEach(n => n.innerText = '');
                     
-                    // 如果是空白單元格，計算並顯示候選數字
-                    if (board[r][c] === 0 && initial[r][c] === 0) { // 如果單元格是空白且不是初始線索
-                        // 合併初始盤面和玩家輸入，用於檢查候選數字
-                        let combinedGrid = JSON.parse(JSON.stringify(initial)); // 深拷貝初始盤面
-                        for (let i = 0; i < 9; i++) { // 遍歷每一行
-                            for (let j = 0; j < 9; j++) { // 遍歷每一列
-                                if (board[i][j] !== 0) combinedGrid[i][j] = board[i][j]; // 如果玩家有輸入，更新合併盤面
+                    // 如果是空單元格，更新筆記
+                    if (board[r][c] === 0 && initial[r][c] === 0) {
+                        // 合併初始盤面和玩家填寫的數字
+                        let combinedGrid = JSON.parse(JSON.stringify(initial));
+                        for (let i = 0; i < 9; i++) {
+                            for (let j = 0; j < 9; j++) {
+                                if (board[i][j] !== 0) combinedGrid[i][j] = board[i][j];
                             }
                         }
                         
-                        // 檢查每個數字是否可安全填入
-                        for (let n = 1; n <= 9; n++) { // 嘗試數字1-9
-                            if (isSafe(combinedGrid, r, c, n)) { // 如果數字安全
-                                noteContainer.querySelector(`.note-num[data-num='${n}']`).innerText = n; // 顯示候選數字
+                        // 檢查每個數字是否安全，安全則顯示在筆記中
+                        for (let n = 1; n <= 9; n++) {
+                            if (isSafe(combinedGrid, r, c, n)) {
+                                noteContainer.querySelector(`.note-num[data-num='${n}']`).innerText = n;
                             }
                         }
                     }
@@ -1944,289 +1880,253 @@
             }
         }
 
-        /**
-         * 更新高亮顯示
-         * 高亮相關單元格（同一行、列和宮格）和相同數字
-         * 當選中一個單元格時，突出顯示所有相關單元格和相同數字的單元格
-         */
+        // 更新高亮顯示
         function updateHighlighting() {
-            // 清除所有高亮
-            document.querySelectorAll('.cell').forEach(c => { // 遍歷所有單元格
-                c.classList.remove('selected', 'highlight-related', 'highlight-same'); // 移除高亮類
+            // 移除所有高亮類
+            document.querySelectorAll('.cell').forEach(c => {
+                c.classList.remove('selected', 'highlight-related', 'highlight-same');
             });
             
-            document.querySelectorAll('.note-num').forEach(n => { // 遍歷所有筆記數字
-                n.classList.remove('highlighted'); // 移除高亮類
+            // 移除所有筆記高亮類
+            document.querySelectorAll('.note-num').forEach(n => {
+                n.classList.remove('highlighted');
             });
             
-            document.querySelectorAll('.numpad-btn').forEach(b => { // 遍歷所有數字按鈕
-                b.classList.remove('suggested'); // 移除建議類
+            // 移除所有建議數字高亮類
+            document.querySelectorAll('.numpad-btn').forEach(b => {
+                b.classList.remove('suggested');
             });
             
-            // 如果沒有選中單元格，直接返回
+            // 如果沒有選中的單元格，則返回
             if (!selectedCell) return;
             
-            const { r, c } = selectedCell; // 解構選中單元格座標
+            const { r, c } = selectedCell; // 獲取選中單元格座標
             
-            // 獲取當前選中單元格的值
-            const val = board[r][c] !== 0 ? board[r][c] : initial[r][c]; // 優先使用玩家輸入，否則使用初始線索
+            // 獲取選中單元格的值
+            const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
             
-            // 計算當前單元格所在的3x3宮格起始位置
-            const startRow = r - r % 3; // 計算宮格起始行
-            const startCol = c - c % 3; // 計算宮格起始列
+            const startRow = r - r % 3; // 3x3盒子起始行
+            const startCol = c - c % 3; // 3x3盒子起始列
             
-            // 高亮同一行和同一列的單元格
-            for (let i = 0; i < 9; i++) { // 遍歷行和列
-                getCellDiv(r, i).classList.add('highlight-related'); // 高亮同一行單元格
-                getCellDiv(i, c).classList.add('highlight-related'); // 高亮同一列單元格
+            // 高亮相關單元格（同一行、同一列、同一3x3盒子）
+            for (let i = 0; i < 9; i++) {
+                getCellDiv(r, i).classList.add('highlight-related'); // 同一行
+                getCellDiv(i, c).classList.add('highlight-related'); // 同一列
             }
             
-            // 高亮同一3x3宮格的單元格
-            for (let i = 0; i < 3; i++) { // 遍歷宮格的行
-                for (let j = 0; j < 3; j++) { // 遍歷宮格的列
-                    getCellDiv(startRow + i, startCol + j).classList.add('highlight-related'); // 高亮同一宮格單元格
+            // 同一3x3盒子
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    getCellDiv(startRow + i, startCol + j).classList.add('highlight-related');
                 }
             }
             
-            // 高亮選中的單元格
-            getCellDiv(r, c).classList.add('selected'); // 高亮選中單元格
+            getCellDiv(r, c).classList.add('selected'); // 高亮選中的單元格
             
-            // 如果選中的單元格有數字，高亮所有相同數字的單元格
-            if (val !== 0) { // 如果單元格有數字
-                for (let i = 0; i < 9; i++) { // 遍歷每一行
-                    for (let j = 0; j < 9; j++) { // 遍歷每一列
-                        const cellVal = board[i][j] !== 0 ? board[i][j] : initial[i][j]; // 獲取單元格值
-                        if (cellVal === val) { // 如果值相同
-                            getCellDiv(i, j).classList.add('highlight-same'); // 高亮相同數字單元格
+            // 如果有值，高亮相同數值的單元格
+            if (val !== 0) {
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        const cellVal = board[i][j] !== 0 ? board[i][j] : initial[i][j];
+                        if (cellVal === val) {
+                            getCellDiv(i, j).classList.add('highlight-same');
                         }
                     }
                 }
                 
-                // 如果筆記模式啟用，高亮筆記中的相同數字
-                if (notesEnabled) { // 如果筆記模式啟用
-                    document.querySelectorAll(`.note-num[data-num='${val}']`).forEach(noteEl => { // 遍歷相同數字的筆記
-                        if (noteEl.innerText === String(val)) { // 如果筆記數字等於選中數字
-                            noteEl.classList.add('highlighted'); // 高亮筆記數字
+                // 如果筆記模式啟用，高亮相同數值的筆記
+                if (notesEnabled) {
+                    document.querySelectorAll(`.note-num[data-num='${val}']`).forEach(noteEl => {
+                        if (noteEl.innerText === String(val)) {
+                            noteEl.classList.add('highlighted');
                         }
                     });
                 }
             }
             
-            // 僅在選中單元格為空白時檢查並突出顯示建議數字
-            if (board[r][c] === 0 && initial[r][c] === 0) { // 如果選中單元格為空白且不是初始線索
-                checkGroupAndHighlight(r, c); // 檢查並突出顯示建議數字
+            // 如果是空單元格，檢查並高亮建議數字
+            if (board[r][c] === 0 && initial[r][c] === 0) {
+                checkGroupAndHighlight(r, c);
             }
         }
 
-        /**
-         * 檢查行、列或宮是否已填入8個數字，如果是則突出顯示答案
-         * 僅當選中單元格為空白且是唯一缺失的數字時才突出顯示
-         * @param {number} r - 行索引
-         * @param {number} c - 列索引
-         */
+        // 檢查並高亮建議數字
         function checkGroupAndHighlight(r, c) {
-            // 檢查行
-            let rowValues = []; // 行值數組
-            for (let i = 0; i < 9; i++) { // 遍歷同一行的所有單元格
-                const val = board[r][i] !== 0 ? board[r][i] : initial[r][i]; // 獲取單元格值
-                rowValues.push(val); // 添加到行值數組
+            let rowValues = []; // 行中的數字
+            // 收集行中的數字
+            for (let i = 0; i < 9; i++) {
+                const val = board[r][i] !== 0 ? board[r][i] : initial[r][i];
+                rowValues.push(val);
             }
-            let rowMissing = findMissingNumber(rowValues); // 查找缺失的數字
-            if (rowMissing !== -1) { // 如果找到唯一缺失的數字
-                highlightSuggestedNumber(rowMissing); // 突出顯示建議數字
-                return; // 返回，不再檢查其他組
-            }
-            
-            // 檢查列
-            let colValues = []; // 列值數組
-            for (let i = 0; i < 9; i++) { // 遍歷同一列的所有單元格
-                const val = board[i][c] !== 0 ? board[i][c] : initial[i][c]; // 獲取單元格值
-                colValues.push(val); // 添加到列值數組
-            }
-            let colMissing = findMissingNumber(colValues); // 查找缺失的數字
-            if (colMissing !== -1) { // 如果找到唯一缺失的數字
-                highlightSuggestedNumber(colMissing); // 突出顯示建議數字
-                return; // 返回，不再檢查其他組
+            let rowMissing = findMissingNumber(rowValues); // 查找行中缺失的數字
+            // 如果行中只有一個缺失數字，高亮它
+            if (rowMissing !== -1) {
+                highlightSuggestedNumber(rowMissing);
+                return;
             }
             
-            // 檢查宮
-            let boxValues = []; // 宮值數組
-            const startRow = r - r % 3; // 計算宮格起始行
-            const startCol = c - c % 3; // 計算宮格起始列
-            for (let i = 0; i < 3; i++) { // 遍歷宮格的行
-                for (let j = 0; j < 3; j++) { // 遍歷宮格的列
+            let colValues = []; // 列中的數字
+            // 收集列中的數字
+            for (let i = 0; i < 9; i++) {
+                const val = board[i][c] !== 0 ? board[i][c] : initial[i][c];
+                colValues.push(val);
+            }
+            let colMissing = findMissingNumber(colValues); // 查找列中缺失的數字
+            // 如果列中只有一個缺失數字，高亮它
+            if (colMissing !== -1) {
+                highlightSuggestedNumber(colMissing);
+                return;
+            }
+            
+            let boxValues = []; // 3x3盒子中的數字
+            const startRow = r - r % 3; // 3x3盒子起始行
+            const startCol = c - c % 3; // 3x3盒子起始列
+            // 收集3x3盒子中的數字
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
                     const val = board[startRow + i][startCol + j] !== 0 ? 
                                 board[startRow + i][startCol + j] : 
-                                initial[startRow + i][startCol + j]; // 獲取單元格值
-                    boxValues.push(val); // 添加到宮值數組
+                                initial[startRow + i][startCol + j];
+                    boxValues.push(val);
                 }
             }
-            let boxMissing = findMissingNumber(boxValues); // 查找缺失的數字
-            if (boxMissing !== -1) { // 如果找到唯一缺失的數字
-                highlightSuggestedNumber(boxMissing); // 突出顯示建議數字
-                return; // 返回
+            let boxMissing = findMissingNumber(boxValues); // 查找3x3盒子中缺失的數字
+            // 如果3x3盒子中只有一個缺失數字，高亮它
+            if (boxMissing !== -1) {
+                highlightSuggestedNumber(boxMissing);
+                return;
             }
         }
 
-        /**
-         * 在數字組中查找缺失的數字
-         * @param {Array} values - 數字組
-         * @returns {number} 缺失的數字，如果沒有或有多個缺失則返回-1
-         */
+        // 查找缺失的數字
         function findMissingNumber(values) {
             let missing = 0; // 缺失的數字
-            let count = 0; // 缺失數字計數
-            for (let i = 1; i <= 9; i++) { // 遍歷數字1-9
-                if (!values.includes(i)) { // 如果數字不在數組中
-                    missing = i; // 記錄缺失的數字
-                    count++; // 增加缺失計數
+            let count = 0; // 缺失數字數量
+            // 檢查1-9哪些數字缺失
+            for (let i = 1; i <= 9; i++) {
+                if (!values.includes(i)) {
+                    missing = i;
+                    count++;
                 }
             }
-            return count === 1 ? missing : -1; // 如果只有一個缺失數字，返回該數字，否則返回-1
+            // 如果只有一個缺失數字，返回它；否則返回-1
+            return count === 1 ? missing : -1;
         }
 
-        /**
-         * 突出顯示建議的數字
-         * @param {number} num - 要突出顯示的數字
-         */
+        // 高亮建議數字
         function highlightSuggestedNumber(num) {
-            const btn = document.getElementById(`btn-num-${num}`); // 獲取對應的數字按鈕
-            if (btn) { // 如果按鈕存在
+            const btn = document.getElementById(`btn-num-${num}`); // 獲取數字按鈕
+            if (btn) {
                 btn.classList.add('suggested'); // 添加建議類
             }
         }
 
-        /**
-         * 更新數字統計
-         * 顯示每個數字還需要填寫的數量
-         * 當數字已完成時，將對應的數字按鈕變淡
-         */
+        // 更新數字計數
         function updateCounts() {
-            // 重置計數器
-            counts.fill(9); // 將計數器數組重置為9
+            counts.fill(9); // 重置計數為9
             
-            // 統計已填寫的數字
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
-                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c]; // 獲取單元格值
-                    if (val !== 0) counts[val]--; // 如果單元格有數字，減少對應數字的計數
+            // 統計每個數字已使用的數量
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const val = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+                    if (val !== 0) counts[val]--; // 減少對應數字的計數
                 }
             }
             
-            // 更新數字鍵盤顯示
-            for (let i = 1; i <= 9; i++) { // 遍歷數字1-9
-                const btn = document.getElementById(`btn-num-${i}`); // 獲取數字按鈕
+            // 更新數字按鈕的計數顯示
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`btn-num-${i}`);
                 btn.querySelector('.count').innerText = counts[i]; // 更新計數顯示
                 
-                // 如果數字已完成，將按鈕變淡
-                if (counts[i] <= 0) { // 如果數字已完成
-                    btn.classList.add('faded'); // 添加變淡類
-                } else { // 如果數字未完成
-                    btn.classList.remove('faded'); // 移除變淡類
+                // 如果數字已用完，添加淡出效果
+                if (counts[i] <= 0) {
+                    btn.classList.add('faded');
+                } else {
+                    btn.classList.remove('faded');
                 }
             }
         }
 
-        /**
-         * 檢查遊戲是否完成
-         * 比較當前盤面與解答，如果完全相同則遊戲完成
-         */
+        // 檢查是否獲勝
         function checkWin() {
-            let isFull = true; // 是否完成的標誌
+            let isFull = true; // 是否填滿標記
             
-            // 檢查每個單元格是否正確填寫
-            for (let r = 0; r < 9; r++) { // 遍歷每一行
-                for (let c = 0; c < 9; c++) { // 遍歷每一列
-                    const cellVal = board[r][c] !== 0 ? board[r][c] : initial[r][c]; // 獲取單元格值
-                    if (cellVal !== solution[r][c]) { // 如果單元格值不等於解答
-                        isFull = false; // 設置為未完成
-                        break; // 跳出內層循環
+            // 檢查每個單元格是否正確
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cellVal = board[r][c] !== 0 ? board[r][c] : initial[r][c];
+                    // 如果單元格值不正確
+                    if (cellVal !== solution[r][c]) {
+                        isFull = false;
+                        break;
                     }
                 }
-                if (!isFull) break; // 如果未完成，跳出外層循環
+                if (!isFull) break;
             }
             
-            // 如果所有單元格都正確，顯示勝利界面
-            if (isFull) { // 如果遊戲完成
-                gameOver = true; // 設置遊戲結束標誌
+            // 如果所有單元格都正確
+            if (isFull) {
+                gameOver = true; // 標記遊戲結束
                 stopTimer(); // 停止計時器
                 playSound('win'); // 播放勝利音效
                 
-                // 更新勝利界面信息
-                document.getElementById('victory-time-text').innerText = `Time: ${updateTimerDisplay()}`; // 更新耗時顯示
-                document.getElementById('victory-stats').innerText = `Errors: ${errorCount.toString().padStart(2, '0')}, Hints: ${hintCount.toString().padStart(2, '0')}`; // 更新統計顯示
+                // 更新勝利畫面顯示
+                document.getElementById('victory-time-text').innerText = `Time: ${updateTimerDisplay()}`;
+                document.getElementById('victory-stats').innerText = `Errors: ${errorCount.toString().padStart(2, '0')}, Hints: ${hintCount.toString().padStart(2, '0')}`;
                 
-                // 顯示勝利界面
                 showVictoryScreen(); // 顯示勝利畫面
                 
-                // 清除所有高亮
-                document.querySelectorAll('.cell').forEach(c => { // 遍歷所有單元格
-                    c.classList.remove('selected', 'highlight-related', 'highlight-same'); // 移除高亮類
+                // 移除所有高亮
+                document.querySelectorAll('.cell').forEach(c => {
+                    c.classList.remove('selected', 'highlight-related', 'highlight-same');
                 });
             }
         }
 
-        /**
-         * 顯示勝利畫面
-         * 創建聖誕燈裝飾並顯示勝利界面
-         */
+        // 顯示勝利畫面
         function showVictoryScreen() {
-            // 顯示勝利界面
-            document.getElementById('victory-overlay').style.display = 'flex'; // 顯示勝利界面
+            document.getElementById('victory-overlay').style.display = 'flex'; // 顯示勝利畫面遮罩層
             
-            // 創建聖誕燈裝飾
-            createChristmasLights(); // 創建聖誕燈裝飾
+            createChristmasLights(); // 創建聖誕燈飾
         }
 
-        /**
-         * 創建聖誕燈裝飾
-         * 在勝利界面頂部創建一排閃爍的聖誕燈
-         */
+        // 創建聖誕燈飾
         function createChristmasLights() {
-            const lightsContainer = document.getElementById('christmas-lights'); // 獲取聖誕燈容器
-            lightsContainer.innerHTML = ''; // 清空現有內容
+            const lightsContainer = document.getElementById('christmas-lights'); // 獲取燈飾容器
+            lightsContainer.innerHTML = ''; // 清空容器
             
-            // 聖誕燈顏色數組
-            const lightColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#8000ff'];
+            const lightColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#8000ff']; // 燈飾顏色
             
-            // 創建多個聖誕燈
-            for (let i = 0; i < 12; i++) { // 創建12個聖誕燈
-                const light = document.createElement('div'); // 創建聖誕燈元素
-                light.className = 'light'; // 設置類名
-                light.style.backgroundColor = lightColors[i % lightColors.length]; // 設置背景顏色
-                light.style.animationDelay = `${i * 0.2}s`; // 設置動畫延遲，創造波浪效果
+            // 創建12個燈泡
+            for (let i = 0; i < 12; i++) {
+                const light = document.createElement('div');
+                light.className = 'light';
+                light.style.backgroundColor = lightColors[i % lightColors.length]; // 設置顏色
+                light.style.animationDelay = `${i * 0.2}s`; // 設置動畫延遲
                 
-                lightsContainer.appendChild(light); // 將聖誕燈添加到容器
+                lightsContainer.appendChild(light); // 將燈泡添加到容器
             }
         }
 
-        /**
-         * 關閉勝利界面
-         * 隱藏勝利彈窗，返回遊戲界面
-         */
+        // 關閉遮罩層
         function closeOverlay() {
-            document.getElementById('victory-overlay').style.display = 'none'; // 隱藏勝利界面
+            document.getElementById('victory-overlay').style.display = 'none'; // 隱藏勝利畫面遮罩層
             
-            // 開始新遊戲
             startNewGame(); // 開始新遊戲
         }
 
-        /**
-         * 切換音效開關
-         * 開啟或關閉遊戲音效
-         */
+        // 切換音效狀態
         function toggleSound() {
-            // 切換音效狀態
             soundEnabled = !soundEnabled; // 切換音效狀態
             
-            // 更新按鈕圖標，不再改變背景顏色
             const soundBtn = document.getElementById('btn-sound'); // 獲取音效按鈕
-            if (soundEnabled) { // 如果音效開啟
-                soundBtn.innerHTML = '🔊'; // 設置為喇叭圖標
-                soundBtn.title = 'Sound On'; // 更新提示文字
-            } else { // 如果音效關閉
-                soundBtn.innerHTML = '🔇'; // 設置為靜音圖標
-                soundBtn.title = 'Sound Off'; // 更新提示文字
+            // 更新按鈕圖標和提示
+            if (soundEnabled) {
+                soundBtn.innerHTML = '🔊';
+                soundBtn.title = 'Sound On';
+            } else {
+                soundBtn.innerHTML = '🔇';
+                soundBtn.title = 'Sound Off';
             }
         }
     </script>
