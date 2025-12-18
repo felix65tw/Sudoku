@@ -407,59 +407,6 @@
             overflow: hidden; /* 隱藏溢出內容 */
         }
 
-        /* 勝利模態框樣式 */
-        .victory-modal {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 漸變背景 */
-            color: #5a67d8; /* 調整文字顏色為更輕鬆的藍紫色 */
-            border: none; /* 移除邊框 */
-            animation: victory-appear 0.8s ease-out; /* 勝利出現動畫 */
-            overflow: visible; /* 顯示溢出內容 */
-        }
-
-        /* 勝利模態框標題樣式 */
-        .victory-modal h2 {
-            margin-top: 0; /* 上邊距 */
-            font-size: 2.2rem; /* 字體大小 */
-            margin-bottom: 20px; /* 下邊距 */
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 文字陰影 */
-            color: #4c51bf; /* 標題顏色 */
-        }
-
-        /* 勝利模態框段落樣式 */
-        .victory-modal p {
-            color: #5a67d8; /* 文字顏色 */
-            margin-bottom: 20px; /* 下邊距 */
-            font-size: 1.1rem; /* 字體大小 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 文字陰影 */
-            font-weight: 500; /* 字體粗細 */
-        }
-
-        /* 勝利模態框按鈕樣式 */
-        .victory-modal .modal-btn {
-            background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
-            color: #667eea; /* 文字顏色 */
-            border: none; /* 移除邊框 */
-            border-radius: 8px; /* 圓角 */
-            font-size: 1.1rem; /* 字體大小 */
-            cursor: pointer; /* 鼠標樣式 */
-            transition: all 0.3s; /* 過渡效果 */
-            padding: 12px 24px; /* 內邊距 */
-            width: 100%; /* 寬度100% */
-            font-weight: 600; /* 字體粗細 */
-        }
-
-        /* 勝利模態框按鈕懸停效果 */
-        .victory-modal .modal-btn:hover {
-            background: white; /* 白色背景 */
-            transform: translateY(-2px); /* 上移效果 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影效果 */
-        }
-
-        /* 勝利模態框按鈕點擊效果 */
-        .victory-modal .modal-btn:active {
-            transform: translateY(0); /* 還原位置 */
-        }
-
         /* 暫停模態框樣式 */
         .pause-modal {
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 漸變背景 */
@@ -592,56 +539,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影效果 */
         }
 
-        /* 勝利出現動畫定義 */
-        @keyframes victory-appear {
-            0% {
-                transform: scale(0.5) rotate(-10deg); /* 初始狀態：縮小並旋轉 */
-                opacity: 0; /* 完全透明 */
-            }
-            70% {
-                transform: scale(1.05) rotate(5deg); /* 中間狀態：稍微放大並反向旋轉 */
-                opacity: 1; /* 完全不透明 */
-            }
-            100% {
-                transform: scale(1) rotate(0); /* 結束狀態：正常大小和角度 */
-                opacity: 1; /* 完全不透明 */
-            }
-        }
-
-        /* 聖誕燈飾樣式 */
-        .christmas-lights {
-            position: absolute; /* 絕對定位 */
-            top: -20px; /* 頂部位置 */
-            left: 0; /* 左側位置 */
-            width: 100%; /* 寬度100% */
-            height: 30px; /* 高度 */
-            display: flex; /* 彈性佈局 */
-            justify-content: space-around; /* 均勻分佈 */
-            align-items: center; /* 垂直置中 */
-            z-index: 10; /* 層級 */
-        }
-
-        /* 燈泡樣式 */
-        .light {
-            width: 15px; /* 寬度 */
-            height: 15px; /* 高度 */
-            border-radius: 50%; /* 圓形 */
-            animation: light-twinkle 1.5s infinite; /* 閃爍動畫 */
-            box-shadow: 0 0 10px currentColor; /* 發光效果 */
-        }
-
-        /* 燈泡閃爍動畫定義 */
-        @keyframes light-twinkle {
-            0%, 100% {
-                opacity: 0.3; /* 透明度 */
-                transform: scale(0.8); /* 縮小 */
-            }
-            50% {
-                opacity: 1; /* 完全不透明 */
-                transform: scale(1.2); /* 放大 */
-            }
-        }
-
         /* 搖晃動畫定義 */
         @keyframes shake {
             0% { transform: translateX(0); } /* 初始位置 */
@@ -701,6 +598,28 @@
             font-weight: 600; /* 字體粗細 */
         }
 
+        /* 煙火容器樣式 */
+        #fireworks-container {
+            position: fixed; /* 固定定位 */
+            top: 0; /* 頂部對齊 */
+            left: 0; /* 左側對齊 */
+            width: 100%; /* 寬度100% */
+            height: 100%; /* 高度100% */
+            pointer-events: none; /* 禁用點擊事件 */
+            z-index: 1000; /* 層級 */
+            overflow: hidden; /* 隱藏溢出內容 */
+        }
+
+        /* 煙火粒子樣式 */
+        .firework-particle {
+            position: absolute; /* 絕對定位 */
+            width: 4px; /* 寬度 */
+            height: 4px; /* 高度 */
+            border-radius: 50%; /* 圓形 */
+            pointer-events: none; /* 禁用點擊事件 */
+            box-shadow: 0 0 10px currentColor; /* 發光效果 */
+        }
+
         /* 響應式設計 - 小屏幕設備 */
         @media (max-width: 480px) {
             .controls-top {
@@ -740,15 +659,18 @@
             }
             
             .victory-modal h2 {
-                font-size: 1.8rem; /* 字體大小 */
+                font-size: 2rem; /* 字體大小 */
+                margin-bottom: 15px; /* 下邊距 */
             }
             
-            .victory-modal p {
-                font-size: 1rem; /* 字體大小 */
+            .victory-stats {
+                padding: 15px; /* 內邊距 */
+                margin: 15px 0; /* 外邊距 */
             }
             
-            .victory-modal .modal-btn {
+            .victory-stat {
                 font-size: 1rem; /* 字體大小 */
+                margin: 8px 0; /* 外邊距 */
             }
             
             .pause-modal h2 {
@@ -790,20 +712,129 @@
                 width: 2em; /* 寬度 */
             }
             
-            .christmas-lights {
-                top: -15px; /* 頂部位置 */
-                height: 25px; /* 高度 */
-            }
-            
-            .light {
-                width: 12px; /* 寬度 */
-                height: 12px; /* 高度 */
-            }
-            
             .difficulty-select {
                 font-size: 0.8rem; /* 字體大小 */
                 min-width: 90px; /* 最小寬度 */
                 padding: 5px 8px; /* 內邊距 */
+            }
+        }
+        
+        /* ==================== 修改勝利畫面樣式 ==================== */
+        /* 勝利畫面樣式 */
+        .victory-modal {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid transparent;
+            color: white;
+            animation: neonBorder 2s infinite alternate;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            z-index: 100002;
+            min-width: 300px;
+            max-width: 90%;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        /* 霓虹燈邊框動畫 */
+        @keyframes neonBorder {
+            0% {
+                box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff;
+                border-color: #ff00ff;
+            }
+            25% {
+                box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff;
+                border-color: #00ffff;
+            }
+            50% {
+                box-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00, 0 0 30px #ffff00, 0 0 40px #ffff00, 0 0 50px #ffff00;
+                border-color: #ffff00;
+            }
+            75% {
+                box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00;
+                border-color: #00ff00;
+            }
+            100% {
+                box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000;
+                border-color: #ff0000;
+            }
+        }
+        
+        .victory-modal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700;
+            font-size: 2.5rem;
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        .victory-stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .victory-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .victory-stat-label {
+            color: #aaa;
+        }
+        
+        .victory-stat-value {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .victory-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .victory-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .victory-new-game-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .victory-buttons button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* 桌面版樣式 */
+        @media (min-width: 600px) {
+            .victory-modal {
+                min-width: 400px;
+                padding: 40px;
+            }
+            
+            .victory-modal h2 {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -868,19 +899,35 @@
         <div class="keypad" id="keypad"></div>
     </div>
 
+    <!-- 煙火容器 -->
+    <div id="fireworks-container"></div>
+
     <!-- 勝利畫面遮罩層 -->
     <div class="overlay" id="victory-overlay">
         <div class="modal victory-modal">
-            <!-- 聖誕燈飾 -->
-            <div class="christmas-lights" id="christmas-lights"></div>
             <!-- 勝利標題 -->
-            <h2 id="victory-title">恭喜！</h2>
-            <!-- 勝利時間顯示 -->
-            <p id="victory-time-text">時間: 00:00:00</p>
+            <h2 id="victory-title">🎉 恭喜破關 🎉</h2>
+            
             <!-- 勝利統計顯示 -->
-            <p id="victory-stats">錯誤: 00, 提示: 00</p>
+            <div class="victory-stats">
+                <div class="victory-stat">
+                    <span class="victory-stat-label">遊戲時間:</span>
+                    <span class="victory-stat-value" id="victory-time">00:00:00</span>
+                </div>
+                <div class="victory-stat">
+                    <span class="victory-stat-label">錯誤次數:</span>
+                    <span class="victory-stat-value" id="victory-errors">00</span>
+                </div>
+                <div class="victory-stat">
+                    <span class="victory-stat-label">提示次數:</span>
+                    <span class="victory-stat-value" id="victory-hints">00</span>
+                </div>
+            </div>
+            
             <!-- 勝利確定按鈕 -->
-            <button class="modal-btn" onclick="closeOverlay()" id="victory-ok-btn">確定</button>
+            <div class="victory-buttons">
+                <button class="victory-new-game-btn" onclick="closeOverlay()" id="victory-ok-btn">新遊戲</button>
+            </div>
         </div>
     </div>
 
@@ -938,6 +985,10 @@
         let lastInputTime = 0;  // 最後一次輸入的時間戳
         let isFreshGame = true; // 是否是新遊戲（用於檢測秘密代碼）
 
+        // 煙火效果變數
+        let fireworksInterval = null; // 煙火動畫間隔ID
+        let fireworksActive = false; // 煙火是否激活
+
         // 語言設定
         let currentLanguage = 'zh-TW'; // 當前語言，預設為繁體中文
         const translations = {
@@ -949,11 +1000,11 @@
                     'Hard': '困難',     // 困難難度
                     'Expert': '專家'    // 專家難度
                 },
-                victoryTitle: '恭喜！', // 勝利標題
-                victoryTime: '時間',    // 勝利時間
-                victoryErrors: '錯誤',  // 勝利錯誤統計
-                victoryHints: '提示',   // 勝利提示統計
-                victoryOK: '確定',      // 勝利確定按鈕
+                victoryTitle: '🎉 恭喜破關 🎉', // 勝利標題
+                victoryTime: '遊戲時間',    // 勝利時間
+                victoryErrors: '錯誤次數',  // 勝利錯誤統計
+                victoryHints: '提示次數',   // 勝利提示統計
+                victoryOK: '新遊戲',      // 勝利確定按鈕
                 pauseTitle: '遊戲暫停', // 暫停標題
                 pauseText: '點擊按鈕繼續', // 暫停提示文字
                 resume: '繼續',         // 繼續按鈕
@@ -974,11 +1025,11 @@
                     'Hard': '困难',
                     'Expert': '专家'
                 },
-                victoryTitle: '恭喜！',
-                victoryTime: '时间',
-                victoryErrors: '错误',
-                victoryHints: '提示',
-                victoryOK: '确定',
+                victoryTitle: '🎉 恭喜破关 🎉',
+                victoryTime: '游戏时间',
+                victoryErrors: '错误次数',
+                victoryHints: '提示次数',
+                victoryOK: '新游戏',
                 pauseTitle: '游戏暂停',
                 pauseText: '点击按钮继续',
                 resume: '继续',
@@ -999,11 +1050,11 @@
                     'Hard': 'Hard',
                     'Expert': 'Expert'
                 },
-                victoryTitle: 'Congratulations!',
+                victoryTitle: '🎉 Congratulations! 🎉',
                 victoryTime: 'Time',
                 victoryErrors: 'Errors',
                 victoryHints: 'Hints',
-                victoryOK: 'OK',
+                victoryOK: 'New Game',
                 pauseTitle: 'Game Paused',
                 pauseText: 'Click the button to continue',
                 resume: 'Resume',
@@ -1256,8 +1307,7 @@
             
             // 更新勝利畫面文字
             document.getElementById('victory-title').textContent = t.victoryTitle;
-            document.getElementById('victory-time-text').textContent = `${t.victoryTime}: 00:00:00`;
-            document.getElementById('victory-stats').textContent = `${t.victoryErrors}: 00, ${t.victoryHints}: 00`;
+            document.getElementById('victory-time').innerHTML = `00:00:00`;
             document.getElementById('victory-ok-btn').textContent = t.victoryOK;
             
             // 更新暫停畫面文字
@@ -1317,6 +1367,9 @@
 
         // 遊戲核心功能 - 開始新遊戲
         function startNewGame() {
+            // 停止煙火效果
+            stopFireworks();
+            
             // 如果遊戲處於暫停狀態，則取消暫停
             if (isPaused) togglePause();
             
@@ -1561,7 +1614,17 @@
             document.getElementById('hint-stat').innerText = hintCount.toString().padStart(2, '0');
             
             // 更新勝利畫面統計顯示
-            document.getElementById('victory-stats').innerText = `${t.victoryErrors}: ${errorCount.toString().padStart(2, '0')}, ${t.victoryHints}: ${hintCount.toString().padStart(2, '0')}`;
+            document.getElementById('victory-errors').innerText = errorCount.toString().padStart(2, '0');
+            document.getElementById('victory-hints').innerText = hintCount.toString().padStart(2, '0');
+            
+            // 更新勝利畫面統計標籤
+            const victoryStats = document.querySelector('.victory-stats');
+            const victoryStatLabels = victoryStats.querySelectorAll('.victory-stat-label');
+            if (victoryStatLabels.length >= 3) {
+                victoryStatLabels[0].textContent = t.victoryTime + ':';
+                victoryStatLabels[1].textContent = t.victoryErrors + ':';
+                victoryStatLabels[2].textContent = t.victoryHints + ':';
+            }
         }
 
         // 開始計時器
@@ -1599,7 +1662,7 @@
             // 格式化時間字符串
             const text = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             document.getElementById('timer-display').innerText = text; // 更新主計時器顯示
-            document.getElementById('victory-time-text').innerText = `${t.victoryTime}: ${text}`; // 更新勝利畫面計時器顯示
+            document.getElementById('victory-time').innerText = text; // 更新勝利畫面計時器顯示
             return text; // 返回格式化時間字符串
         }
 
@@ -2071,8 +2134,9 @@
                 playSound('win'); // 播放勝利音效
                 
                 // 更新勝利畫面顯示
-                document.getElementById('victory-time-text').innerText = `Time: ${updateTimerDisplay()}`;
-                document.getElementById('victory-stats').innerText = `Errors: ${errorCount.toString().padStart(2, '0')}, Hints: ${hintCount.toString().padStart(2, '0')}`;
+                document.getElementById('victory-time').innerText = updateTimerDisplay();
+                document.getElementById('victory-errors').innerText = errorCount.toString().padStart(2, '0');
+                document.getElementById('victory-hints').innerText = hintCount.toString().padStart(2, '0');
                 
                 showVictoryScreen(); // 顯示勝利畫面
                 
@@ -2087,30 +2151,195 @@
         function showVictoryScreen() {
             document.getElementById('victory-overlay').style.display = 'flex'; // 顯示勝利畫面遮罩層
             
-            createChristmasLights(); // 創建聖誕燈飾
+            startFireworks(); // 開始煙火效果
         }
 
-        // 創建聖誕燈飾
-        function createChristmasLights() {
-            const lightsContainer = document.getElementById('christmas-lights'); // 獲取燈飾容器
-            lightsContainer.innerHTML = ''; // 清空容器
+        // 開始煙火效果
+        function startFireworks() {
+            const container = document.getElementById('fireworks-container'); // 獲取煙火容器
+            container.innerHTML = ''; // 清空容器
             
-            const lightColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000', '#8000ff']; // 燈飾顏色
+            fireworksActive = true; // 標記煙火激活
             
-            // 創建12個燈泡
-            for (let i = 0; i < 12; i++) {
-                const light = document.createElement('div');
-                light.className = 'light';
-                light.style.backgroundColor = lightColors[i % lightColors.length]; // 設置顏色
-                light.style.animationDelay = `${i * 0.2}s`; // 設置動畫延遲
+            // 創建多個煙火
+            const fireworkCount = 15; // 煙火數量
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff6600', '#ff0099']; // 煙火顏色
+            
+            // 每隔一段時間創建一個煙火
+            let created = 0;
+            fireworksInterval = setInterval(() => {
+                if (created >= fireworkCount) {
+                    clearInterval(fireworksInterval); // 停止創建煙火
+                    return;
+                }
                 
-                lightsContainer.appendChild(light); // 將燈泡添加到容器
+                createFirework(
+                    Math.random() * window.innerWidth, // 隨機X座標
+                    window.innerHeight, // 從底部開始
+                    colors[Math.floor(Math.random() * colors.length)] // 隨機顏色
+                );
+                
+                created++;
+            }, 300); // 每300毫秒創建一個煙火
+        }
+
+        // 創建單個煙火
+        function createFirework(x, y, color) {
+            const container = document.getElementById('fireworks-container'); // 獲取煙火容器
+            
+            // 創建煙火核心
+            const core = document.createElement('div');
+            core.className = 'firework-particle';
+            core.style.left = x + 'px';
+            core.style.top = y + 'px';
+            core.style.backgroundColor = color;
+            core.style.width = '8px';
+            core.style.height = '8px';
+            core.style.boxShadow = `0 0 20px ${color}`;
+            container.appendChild(core);
+            
+            // 煙火上升動畫
+            const riseDuration = 1000; // 上升持續時間（毫秒）
+            const targetY = Math.random() * (window.innerHeight * 0.4) + (window.innerHeight * 0.1); // 目標Y座標
+            
+            let startTime = null;
+            
+            function riseAnimation(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / riseDuration, 1);
+                
+                // 緩動函數
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                
+                // 更新位置
+                core.style.top = (y - (targetY - y) * easeOutCubic) + 'px';
+                
+                // 如果未完成，繼續動畫
+                if (progress < 1) {
+                    requestAnimationFrame(riseAnimation);
+                } else {
+                    // 上升完成，爆炸
+                    explodeFirework(
+                        parseFloat(core.style.left),
+                        parseFloat(core.style.top),
+                        color
+                    );
+                    container.removeChild(core); // 移除核心
+                }
             }
+            
+            requestAnimationFrame(riseAnimation);
+        }
+
+        // 煙火爆炸效果
+        function explodeFirework(x, y, color) {
+            const container = document.getElementById('fireworks-container'); // 獲取煙火容器
+            const particleCount = 80; // 粒子數量
+            const particles = []; // 粒子數組
+            
+            // 創建爆炸粒子
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = color;
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.boxShadow = `0 0 10px ${color}`;
+                container.appendChild(particle);
+                
+                // 計算粒子的運動角度和速度
+                const angle = (i / particleCount) * Math.PI * 2; // 角度
+                const speed = 2 + Math.random() * 3; // 速度
+                
+                particles.push({
+                    element: particle,
+                    vx: Math.cos(angle) * speed, // X軸速度
+                    vy: Math.sin(angle) * speed, // Y軸速度
+                    life: 1.0, // 生命值
+                    decay: 0.01 + Math.random() * 0.02 // 衰減率
+                });
+            }
+            
+            // 粒子動畫
+            function animateParticles() {
+                // 如果煙火效果未激活，清除所有粒子
+                if (!fireworksActive) {
+                    particles.forEach(p => {
+                        if (p.element.parentNode) {
+                            container.removeChild(p.element);
+                        }
+                    });
+                    return;
+                }
+                
+                let allDead = true; // 是否所有粒子都消失
+                
+                particles.forEach(p => {
+                    if (p.life <= 0) return;
+                    
+                    // 更新生命值
+                    p.life -= p.decay;
+                    
+                    // 如果粒子還活著
+                    if (p.life > 0) {
+                        allDead = false;
+                        
+                        // 更新位置
+                        const currentX = parseFloat(p.element.style.left);
+                        const currentY = parseFloat(p.element.style.top);
+                        
+                        p.element.style.left = (currentX + p.vx) + 'px';
+                        p.element.style.top = (currentY + p.vy) + 'px';
+                        
+                        // 添加重力效果
+                        p.vy += 0.05;
+                        
+                        // 更新透明度
+                        p.element.style.opacity = p.life;
+                        
+                        // 根據生命值縮小粒子
+                        const size = 4 * p.life;
+                        p.element.style.width = size + 'px';
+                        p.element.style.height = size + 'px';
+                    } else {
+                        // 粒子死亡，移除
+                        if (p.element.parentNode) {
+                            container.removeChild(p.element);
+                        }
+                    }
+                });
+                
+                // 如果還有活著的粒子，繼續動畫
+                if (!allDead) {
+                    requestAnimationFrame(animateParticles);
+                }
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+
+        // 停止煙火效果
+        function stopFireworks() {
+            fireworksActive = false; // 標記煙火未激活
+            
+            // 清除煙火間隔
+            if (fireworksInterval) {
+                clearInterval(fireworksInterval);
+                fireworksInterval = null;
+            }
+            
+            // 清空煙火容器
+            const container = document.getElementById('fireworks-container');
+            container.innerHTML = '';
         }
 
         // 關閉遮罩層
         function closeOverlay() {
             document.getElementById('victory-overlay').style.display = 'none'; // 隱藏勝利畫面遮罩層
+            stopFireworks(); // 停止煙火效果
             
             startNewGame(); // 開始新遊戲
         }
