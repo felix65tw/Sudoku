@@ -1238,11 +1238,18 @@
                 height: 40px;
             }
             
-            /* 手機版功能按鈕按下效果 - 與網頁版滑鼠懸停相同 */
+            /* 手機版功能按鈕按下效果 - 修復選擇器優先級問題 */
             .text-btn:active {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
                 background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important;
+                color: white !important;
+                border-color: transparent !important;
+            }
+            
+            /* 特別處理筆記模式按鈕的按下效果 */
+            .text-btn.on:active {
+                background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%) !important;
                 color: white !important;
                 border-color: transparent !important;
             }
@@ -1265,7 +1272,7 @@
                 height: 50px;
             }
             
-            /* 手機版數字鍵盤按下效果 - 與網頁版滑鼠懸停相同 */
+            /* 手機版數字鍵盤按下效果 - 修復選擇器優先級問題 */
             .numpad-btn:active {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 4px 8px var(--shadow) !important;
@@ -1280,6 +1287,38 @@
             
             .numpad-btn:active .count {
                 color: rgba(255, 255, 255, 0.8) !important;
+            }
+            
+            /* 數字鍵盤建議按鈕的按下效果 */
+            .numpad-btn.suggested:active {
+                background: linear-gradient(135deg, var(--warning) 0%, #ffcc00 100%) !important;
+                border-color: transparent !important;
+            }
+            
+            .numpad-btn.suggested:active .num {
+                color: #333 !important;
+                transform: scale(1.1) !important;
+            }
+            
+            .numpad-btn.suggested:active .count {
+                color: rgba(51, 51, 51, 0.8) !important;
+            }
+            
+            /* 禁用狀態按鈕的按下效果 */
+            .numpad-btn.faded:active {
+                background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+                transform: none !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                border-color: var(--border) !important;
+            }
+            
+            .numpad-btn.faded:active .num {
+                color: var(--primary) !important;
+                transform: none !important;
+            }
+            
+            .numpad-btn.faded:active .count {
+                color: var(--text-secondary) !important;
             }
             
             .modal {
@@ -1317,6 +1356,38 @@
             .victory-buttons button {
                 padding: 14px;
                 font-size: 1rem;
+            }
+            
+            /* 手機版勝利按鈕按下效果 */
+            .victory-buttons button:active {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+            }
+            
+            /* 手機版設定和返回按鈕按下效果 */
+            .settings-icon-btn:active,
+            .return-btn:active,
+            .modal-btn:active,
+            .victory-new-game-btn:active,
+            #close-bible-btn:active,
+            #resume-btn:active {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+            }
+            
+            /* 設定面板返回按鈕特別效果 */
+            .return-btn:active {
+                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%) !important;
+            }
+            
+            /* 暫停畫面繼續按鈕按下效果 */
+            #resume-btn:active {
+                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%) !important;
+            }
+            
+            /* 聖經畫面關閉按鈕按下效果 */
+            #close-bible-btn:active {
+                background: #6d4c41 !important;
             }
             
             .pause-modal h2 {
@@ -1385,6 +1456,12 @@
                 padding: 5px;
             }
             
+            /* 設定圖標按下效果 */
+            .settings-icon-btn:active {
+                background: rgba(52, 152, 219, 0.2) !important;
+                transform: rotate(30deg) !important;
+            }
+            
             .timer {
                 padding: 4px 0;
                 font-size: 0.85rem;
@@ -1396,20 +1473,23 @@
                 height: 22px;
             }
             
-            /* 手機版設定和返回按鈕按下效果 */
-            .settings-icon-btn:active,
-            .return-btn:active,
-            .modal-btn:active,
-            .victory-new-game-btn:active {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+            /* 暫停按鈕按下效果 */
+            .pause-btn:active {
+                color: var(--primary) !important;
+                background: rgba(52, 152, 219, 0.2) !important;
+                transform: scale(0.95) !important;
             }
             
-            /* 特別針對筆記模式按鈕的按下效果 */
-            .text-btn.on:active {
-                background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%) !important;
-                color: white !important;
-                border-color: transparent !important;
+            /* 難度選擇器按下效果 */
+            .difficulty-select:active {
+                transform: translateY(0) !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            /* 計時器按下效果 */
+            .timer:active {
+                transform: scale(0.95) !important;
+                color: var(--primary-light) !important;
             }
         }
         
@@ -1522,7 +1602,7 @@
     <!-- 勝利畫面 -->
     <div class="overlay" id="victory-overlay">
         <div class="modal victory-modal" id="victory-modal">
-            <h2 id="victory-title">YOU WIN</h2>
+            <h2 id="victory-title">YOU WIN!</h2>
             
             <div class="victory-stats">
                 <div class="victory-stat">
