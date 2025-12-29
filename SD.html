@@ -118,6 +118,14 @@
             75% { transform: translateX(5px); }
         }
 
+        /* 新增：數字抖動動畫 */
+        @keyframes numberShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
+        }
+
         @keyframes ripple {
             to {
                 transform: scale(4);
@@ -564,6 +572,11 @@
 
         .cell.shake-error {
             animation: shakeError 0.4s ease-in-out;
+        }
+
+        /* 新增：數字抖動效果 */
+        .cell.shake-number .main-num {
+            animation: numberShake 0.5s ease-in-out;
         }
 
         .cell.hinting .main-num {
@@ -1227,8 +1240,8 @@
             
             /* 手機版功能按鈕按下效果 - 與網頁版滑鼠懸停相同 */
             .text-btn:active {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
                 background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important;
                 color: white !important;
                 border-color: transparent !important;
@@ -1254,7 +1267,7 @@
             
             /* 手機版數字鍵盤按下效果 - 與網頁版滑鼠懸停相同 */
             .numpad-btn:active {
-                transform: translateY(-2px);
+                transform: translateY(-2px) !important;
                 box-shadow: 0 4px 8px var(--shadow) !important;
                 background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important;
                 border-color: transparent !important;
@@ -1262,7 +1275,7 @@
             
             .numpad-btn:active .num {
                 color: white !important;
-                transform: scale(1.05);
+                transform: scale(1.05) !important;
             }
             
             .numpad-btn:active .count {
@@ -1388,8 +1401,8 @@
             .return-btn:active,
             .modal-btn:active,
             .victory-new-game-btn:active {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
             }
             
             /* 特別針對筆記模式按鈕的按下效果 */
@@ -2258,9 +2271,13 @@
                 
                 isFreshGame = false;
             } else {
-                // 錯誤動畫
+                // 錯誤動畫 - 更新：添加數字抖動效果
                 cellDiv.classList.add('shake-error');
-                setTimeout(() => cellDiv.classList.remove('shake-error'), 400);
+                cellDiv.classList.add('shake-number'); // 新增數字抖動效果
+                setTimeout(() => {
+                    cellDiv.classList.remove('shake-error');
+                    cellDiv.classList.remove('shake-number');
+                }, 400);
                 
                 playSound('error');
                 errorCount++;
