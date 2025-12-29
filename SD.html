@@ -2063,11 +2063,14 @@
             const victoryStatLabels = document.querySelectorAll('.victory-stat-label');
             if (victoryStatLabels.length >= 4) {
                 // 順序：難度、時間、錯誤、提示
-                victoryStatLabels[0].textContent = '難度:';
+                victoryStatLabels[0].textContent = t.difficulty[currentDiff] + ':';
                 victoryStatLabels[1].textContent = t.victoryTime + ':';
                 victoryStatLabels[2].textContent = t.victoryErrors + ':';
                 victoryStatLabels[3].textContent = t.victoryHints + ':';
             }
+            
+            // 更新勝利畫面的難度顯示
+            document.getElementById('victory-difficulty').innerText = t.difficulty[currentDiff];
             
             updateStats();
         }
