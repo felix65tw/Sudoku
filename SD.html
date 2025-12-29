@@ -215,7 +215,7 @@
             100% { transform: translateX(100%); }
         }
 
-        /* 快樂的煙花動畫 */
+        /* 快樂的煙花動畫 - 修改為循環 */
         @keyframes happy-firework {
             0% { transform: translateY(0) scale(0); opacity: 1; }
             50% { transform: translateY(-100px) scale(1.2); opacity: 0.8; }
@@ -348,12 +348,15 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .text-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-color: transparent;
+        /* 網頁版滑鼠滑過特效 */
+        @media (min-width: 481px) {
+            .text-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                color: white;
+                border-color: transparent;
+            }
         }
 
         .text-btn:active {
@@ -420,9 +423,11 @@
             padding: 4px;
         }
 
-        .pause-btn:hover {
-            color: var(--primary);
-            background: rgba(52, 152, 219, 0.1);
+        @media (min-width: 481px) {
+            .pause-btn:hover {
+                color: var(--primary);
+                background: rgba(52, 152, 219, 0.1);
+            }
         }
 
         /* 統計區域容器 */
@@ -495,10 +500,12 @@
             margin-left: 8px;
         }
 
-        .settings-icon-btn:hover {
-            color: var(--primary);
-            background: rgba(52, 152, 219, 0.1);
-            transform: rotate(30deg);
+        @media (min-width: 481px) {
+            .settings-icon-btn:hover {
+                color: var(--primary);
+                background: rgba(52, 152, 219, 0.1);
+                transform: rotate(30deg);
+            }
         }
 
         #sudoku-board {
@@ -646,19 +653,22 @@
             transform: scale(0.95);
         }
 
-        .numpad-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px var(--shadow);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-color: transparent;
-        }
-
-        .numpad-btn:hover .num {
-            color: white;
-        }
-
-        .numpad-btn:hover .count {
-            color: rgba(255, 255, 255, 0.8);
+        /* 網頁版滑鼠滑過特效 */
+        @media (min-width: 481px) {
+            .numpad-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px var(--shadow);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                border-color: transparent;
+            }
+            
+            .numpad-btn:hover .num {
+                color: white;
+            }
+            
+            .numpad-btn:hover .count {
+                color: rgba(255, 255, 255, 0.8);
+            }
         }
 
         .numpad-btn .num {
@@ -858,14 +868,15 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .return-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        @media (min-width: 481px) {
+            .return-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            }
         }
 
         .return-btn:active {
             transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
 
         /* 重新設計暫停畫面 */
@@ -908,10 +919,12 @@
             box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
         }
 
-        .pause-modal .modal-btn:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+        @media (min-width: 481px) {
+            .pause-modal .modal-btn:hover {
+                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+                transform: translateY(-3px);
+                box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+            }
         }
 
         .pause-modal .modal-btn:active {
@@ -995,10 +1008,12 @@
             flex-shrink: 0;
         }
 
-        .bible-modal .modal-btn:hover {
-            background: #6d4c41;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        @media (min-width: 481px) {
+            .bible-modal .modal-btn:hover {
+                background: #6d4c41;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
         }
 
         #fireworks-container {
@@ -1124,9 +1139,11 @@
             color: white;
         }
 
-        .victory-buttons button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        @media (min-width: 481px) {
+            .victory-buttons button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            }
         }
 
         .victory-buttons button:active {
@@ -1303,16 +1320,19 @@
                 width: 2em;
             }
             
-            /* 手機版設定面板 */
+            /* 手機版設定面板 - 修改：不要分成兩行 */
             .settings-modal {
                 padding: 20px;
                 width: 90%;
             }
             
             .setting-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+                /* 保持一行排列，不換行 */
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+                margin: 15px 0;
+                padding: 10px 0;
             }
             
             .settings-buttons {
@@ -1509,6 +1529,7 @@
         let isFreshGame = true;
         let fireworksInterval = null;
         let fireworksActive = false;
+        let victoryFireworksInterval = null; // 專門用於勝利畫面的煙花循環
         
         // 測試模式變數
         let timerClickCount = 0;
@@ -2035,6 +2056,7 @@
 
         function startNewGame() {
             stopFireworks();
+            stopVictoryFireworks();
             
             if (isPaused) togglePause();
             
@@ -2731,8 +2753,8 @@
         function showVictoryScreen() {
             document.getElementById('victory-overlay').style.display = 'flex';
             
-            // 啟動煙火效果
-            startHappyFireworks();
+            // 啟動煙火效果 - 循環播放
+            startVictoryFireworksLoop();
             
             // 添加快樂的裝飾元素
             const modal = document.getElementById('victory-modal');
@@ -2751,34 +2773,57 @@
             });
         }
 
-        // ========== 快樂的煙花效果系統 ==========
-        function startHappyFireworks() {
+        // ========== 勝利畫面的煙花循環效果系統 ==========
+        function startVictoryFireworksLoop() {
             const container = document.getElementById('fireworks-container');
             if (!container) return;
             
             container.innerHTML = '';
             
+            // 先發射一波煙花
+            startHappyFireworks();
+            
+            // 然後設置循環，每5秒發射一波煙花
+            victoryFireworksInterval = setInterval(() => {
+                if (document.getElementById('victory-overlay').style.display === 'flex') {
+                    startHappyFireworks();
+                } else {
+                    // 如果勝利畫面已關閉，則停止循環
+                    stopVictoryFireworks();
+                }
+            }, 5000); // 每5秒發射一波
+        }
+
+        function stopVictoryFireworks() {
+            if (victoryFireworksInterval) {
+                clearInterval(victoryFireworksInterval);
+                victoryFireworksInterval = null;
+            }
+            
+            stopFireworks();
+        }
+
+        // ========== 快樂的煙花效果系統 ==========
+        function startHappyFireworks() {
+            const container = document.getElementById('fireworks-container');
+            if (!container) return;
+            
             fireworksActive = true;
             
-            const fireworkCount = 30; // 減少數量但增加快樂感
+            const fireworkCount = 20; // 每波煙花數量
             const colors = ['#FF6B35', '#FFCC00', '#4CAF50', '#3498DB', '#9B59B6', '#E74C3C', '#1ABC9C', '#F39C12'];
             
             let created = 0;
-            fireworksInterval = setInterval(() => {
+            const fireworkInterval = setInterval(() => {
                 if (created >= fireworkCount) {
-                    clearInterval(fireworksInterval);
-                    fireworksInterval = null;
-                    // 持續發射一些額外的煙花
-                    setTimeout(() => {
-                        createRandomHappyFirework();
-                    }, 500);
+                    clearInterval(fireworkInterval);
                     return;
                 }
                 
                 createRandomHappyFirework();
                 
                 created++;
-            }, 150); // 更快的發射間隔
+            }, 100); // 每0.1秒發射一個煙花
         }
 
         function createRandomHappyFirework() {
@@ -2816,7 +2861,7 @@
             const container = document.getElementById('fireworks-container');
             if (!container) return;
             
-            const sparkleCount = 12; // 減少數量但增加快樂感
+            const sparkleCount = 12;
             
             for (let i = 0; i < sparkleCount; i++) {
                 const sparkle = document.createElement('div');
@@ -2859,7 +2904,7 @@
 
         function closeOverlay() {
             document.getElementById('victory-overlay').style.display = 'none';
-            stopFireworks();
+            stopVictoryFireworks();
             
             startNewGame();
         }
