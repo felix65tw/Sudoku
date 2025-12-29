@@ -1576,6 +1576,9 @@
             theme: 'retro' // 默認為復古主題
         };
         
+        // 當前遊戲難度
+        let currentGameDifficulty = 'Easy';
+        
         const translations = {
             'zh-TW': {
                 difficulty: {
@@ -2059,20 +2062,16 @@
             
             themeSelect.value = currentTheme;
             
-            // 更新勝利統計標籤 - 修正順序
-            const victoryStatLabels = document.querySelectorAll('.victory-stat-label');
-            if (victoryStatLabels.length >= 4) {
-                // 順序：難度、時間、錯誤、提示
-                victoryStatLabels[0].textContent = t.difficulty[currentDiff] + ':';
-                victoryStatLabels[1].textContent = t.victoryTime + ':';
-                victoryStatLabels[2].textContent = t.victoryErrors + ':';
-                victoryStatLabels[3].textContent = t.victoryHints + ':';
-            }
-            
             // 更新勝利畫面的難度顯示
-            document.getElementById('victory-difficulty').innerText = t.difficulty[currentDiff];
+            updateVictoryDifficulty();
             
             updateStats();
+        }
+        
+        function updateVictoryDifficulty() {
+            const t = translations[settings.language];
+            const difficultyText = t.difficulty[currentGameDifficulty] || currentGameDifficulty;
+            document.getElementById('victory-difficulty').innerText = difficultyText;
         }
 
         function showSettings() {
@@ -2096,6 +2095,7 @@
             if (isPaused) togglePause();
             
             const diff = document.getElementById('difficulty').value;
+            currentGameDifficulty = diff;
             
             generateSudoku(diff);
             
@@ -2115,6 +2115,7 @@
             updateBoardUI();
             updateCounts();
             updateHighlighting();
+            updateVictoryDifficulty(); // 更新勝利畫面的難度顯示
             
             startTimer();
         }
@@ -2766,16 +2767,11 @@
                 stopTimer();
                 playSound('win');
                 
-                // 獲取當前難度
-                const diff = document.getElementById('difficulty').value;
-                const t = translations[settings.language];
-                const difficultyText = t.difficulty[diff] || diff;
-                
-                // 勝利畫面資料更新 - 修正順序
-                document.getElementById('victory-difficulty').innerText = difficultyText;
+                // 勝利畫面資料更新
                 document.getElementById('victory-time').innerText = updateTimerDisplay();
                 document.getElementById('victory-errors').innerText = errorCount.toString().padStart(2, '0');
                 document.getElementById('victory-hints').innerText = hintCount.toString().padStart(2, '0');
+                updateVictoryDifficulty(); // 使用當前語言更新難度顯示
                 
                 showVictoryScreen();
                 
