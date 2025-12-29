@@ -266,7 +266,7 @@
             max-width: 400px;
             display: flex;
             flex-direction: column;
-            gap: 1px; /* 改為1px */
+            gap: 1px;
             overflow: hidden;
         }
 
@@ -283,12 +283,12 @@
 
         /* 重新設計難度選擇器 */
         .difficulty-select {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: var(--primary);
             border: none;
             border-radius: 12px;
             font-size: 0.95rem;
             cursor: pointer;
-            padding: 12px 15px; /* 增加內邊距以增加高度 */
+            padding: 12px 15px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
@@ -299,7 +299,7 @@
             color: white;
             font-weight: 700;
             min-width: 110px;
-            height: 44px; /* 設置固定高度 */
+            height: 44px;
             text-align: center;
             text-align-last: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -335,12 +335,12 @@
             padding: 8px;
         }
 
-        /* 重新設計功能按鈕 - 調整高度與難度選擇器一致 */
+        /* 重新設計功能按鈕 */
         .text-btn {
-            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.8) 100%);
+            background: var(--card-bg);
             border: 2px solid var(--primary);
             color: var(--primary);
-            padding: 12px 15px; /* 增加內邊距以增加高度 */
+            padding: 12px 15px;
             border-radius: 12px;
             font-size: 0.95rem;
             font-weight: 700;
@@ -352,7 +352,7 @@
             align-items: center;
             justify-content: center;
             min-width: 70px;
-            height: 44px; /* 設置固定高度，與難度選擇器一致 */
+            height: 44px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
@@ -361,7 +361,7 @@
             .text-btn:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                background: var(--primary);
                 color: white;
                 border-color: transparent;
             }
@@ -372,7 +372,7 @@
         }
 
         .text-btn.on {
-            background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%);
+            background: var(--success);
             color: white;
             border-color: transparent;
         }
@@ -394,7 +394,7 @@
             gap: 8px;
         }
 
-        /* 修改計時器樣式 - 移除框線 */
+        /* 修改計時器樣式 */
         .timer {
             font-weight: 700;
             font-family: monospace;
@@ -403,7 +403,6 @@
             user-select: none;
             transition: transform 0.2s;
             font-size: 0.9rem;
-            /* 移除背景、邊框和陰影 */
             padding: 4px 0;
             border-radius: 0;
             border: none;
@@ -425,7 +424,7 @@
             justify-content: center;
             width: 24px;
             height: 24px;
-            background: var(--card-bg); /* 改為使用皮膚的底色 */
+            background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 50%;
             padding: 4px;
@@ -445,7 +444,7 @@
             gap: 8px;
         }
 
-        /* 統計區域 - 移除外框 */
+        /* 統計區域 */
         .stats {
             display: flex;
             gap: 15px;
@@ -650,7 +649,7 @@
 
         .numpad-btn {
             flex: 1;
-            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.9) 100%);
+            background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
             display: flex;
@@ -671,7 +670,7 @@
             .numpad-btn:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 8px var(--shadow);
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+                background: var(--primary);
                 border-color: transparent;
             }
             
@@ -721,7 +720,7 @@
             z-index: 1000;
         }
 
-        /* 修改所有模態框的位置 - 手機版向上移動四分之一 */
+        /* 修改所有模態框的位置 */
         .modal {
             background: var(--card-bg);
             padding: 30px;
@@ -740,7 +739,7 @@
             animation: slideIn 0.3s ease-out;
         }
 
-        /* 設定面板樣式 - 重新設計 */
+        /* 設定面板樣式 */
         .settings-modal {
             max-width: 380px;
             max-height: 85vh;
@@ -868,7 +867,7 @@
         }
 
         .return-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: #3498db;
             color: white;
             border: none;
             border-radius: 10px;
@@ -885,6 +884,7 @@
             .return-btn:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+                background: #2980b9;
             }
         }
 
@@ -894,7 +894,7 @@
 
         /* 重新設計暫停畫面 */
         .pause-modal {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: #f8f9fa;
             color: #333;
             border: 3px solid #3498db;
             width: 320px;
@@ -921,7 +921,7 @@
         }
 
         .pause-modal .modal-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: #3498db;
             color: white;
             border: none;
             border-radius: 12px;
@@ -936,7 +936,7 @@
 
         @media (min-width: 481px) {
             .pause-modal .modal-btn:hover {
-                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+                background: #2980b9;
                 transform: translateY(-3px);
                 box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
             }
@@ -1049,9 +1049,9 @@
             z-index: 9999;
         }
 
-        /* 重新設計勝利畫面 - 恢復霓虹燈效果 */
+        /* 重新設計勝利畫面 */
         .victory-modal {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: #1a1a2e;
             border: 4px solid #3498db;
             color: #fff;
             border-radius: 20px;
@@ -1063,7 +1063,6 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            /* 恢復霓虹燈邊框動畫 */
             animation: victory-neon-border 2s infinite alternate;
         }
 
@@ -1150,7 +1149,7 @@
         }
 
         .victory-new-game-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: #3498db;
             color: white;
         }
 
@@ -1158,6 +1157,7 @@
             .victory-buttons button:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+                background: #2980b9;
             }
         }
 
@@ -1216,7 +1216,7 @@
             pointer-events: none;
         }
 
-        /* 手機版按鍵效果 - 重要修正 */
+        /* 手機版按鍵效果 - 修復 */
         @media (max-width: 480px) {
             .controls-top {
                 gap: 6px;
@@ -1238,18 +1238,18 @@
                 height: 40px;
             }
             
-            /* 手機版功能按鈕按下效果 - 修復選擇器優先級問題 */
+            /* 手機版功能按鈕按下效果 - 修復 */
             .text-btn:active {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important;
+                background: var(--primary) !important;
                 color: white !important;
                 border-color: transparent !important;
             }
             
             /* 特別處理筆記模式按鈕的按下效果 */
             .text-btn.on:active {
-                background: linear-gradient(135deg, var(--success) 0%, var(--success-light) 100%) !important;
+                background: var(--success) !important;
                 color: white !important;
                 border-color: transparent !important;
             }
@@ -1272,11 +1272,11 @@
                 height: 50px;
             }
             
-            /* 手機版數字鍵盤按下效果 - 修復選擇器優先級問題 */
+            /* 手機版數字鍵盤按下效果 - 修復 */
             .numpad-btn:active {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 4px 8px var(--shadow) !important;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%) !important;
+                background: var(--primary) !important;
                 border-color: transparent !important;
             }
             
@@ -1291,7 +1291,7 @@
             
             /* 數字鍵盤建議按鈕的按下效果 */
             .numpad-btn.suggested:active {
-                background: linear-gradient(135deg, var(--warning) 0%, #ffcc00 100%) !important;
+                background: var(--warning) !important;
                 border-color: transparent !important;
             }
             
@@ -1306,7 +1306,7 @@
             
             /* 禁用狀態按鈕的按下效果 */
             .numpad-btn.faded:active {
-                background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
+                background: var(--card-bg) !important;
                 transform: none !important;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
                 border-color: var(--border) !important;
@@ -1324,7 +1324,7 @@
             .modal {
                 padding: 20px;
                 width: 280px;
-                margin-top: -15vh; /* 手機版調整 - 向上移動四分之一 */
+                margin-top: -15vh;
             }
             
             /* 手機版勝利畫面字體調整 */
@@ -1362,6 +1362,7 @@
             .victory-buttons button:active {
                 transform: translateY(-2px) !important;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+                background: #2980b9 !important;
             }
             
             /* 手機版設定和返回按鈕按下效果 */
@@ -1377,12 +1378,12 @@
             
             /* 設定面板返回按鈕特別效果 */
             .return-btn:active {
-                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%) !important;
+                background: #2980b9 !important;
             }
             
             /* 暫停畫面繼續按鈕按下效果 */
             #resume-btn:active {
-                background: linear-gradient(135deg, #2980b9 0%, #3498db 100%) !important;
+                background: #2980b9 !important;
             }
             
             /* 聖經畫面關閉按鈕按下效果 */
@@ -1666,7 +1667,7 @@
         let isFreshGame = true;
         let fireworksInterval = null;
         let fireworksActive = false;
-        let victoryFireworksInterval = null; // 專門用於勝利畫面的煙花循環
+        let victoryFireworksInterval = null;
         
         // 測試模式變數
         let timerClickCount = 0;
@@ -1674,11 +1675,11 @@
         const TIMER_CLICK_THRESHOLD = 3;
         const TIMER_CLICK_TIMEOUT = 1500;
         
-        // 設置管理 - 默認使用復古主題
+        // 設置管理
         let settings = {
             soundEnabled: true,
             language: 'zh-TW',
-            theme: 'retro' // 默認為復古主題
+            theme: 'retro'
         };
         
         // 當前遊戲難度
@@ -1693,7 +1694,7 @@
                     'Hard': '困難',
                     'Expert': '專家'
                 },
-                victoryTitle: 'YOU WIN',
+                victoryTitle: 'YOU WIN!',
                 victoryDifficulty: '難度:',
                 victoryTime: '時間:',
                 victoryErrors: '錯誤:',
@@ -1729,7 +1730,7 @@
                     'Hard': '困难',
                     'Expert': '专家'
                 },
-                victoryTitle: 'YOU WIN',
+                victoryTitle: 'YOU WIN!',
                 victoryDifficulty: '难度:',
                 victoryTime: '时间:',
                 victoryErrors: '错误:',
@@ -1765,7 +1766,7 @@
                     'Hard': 'Hard',
                     'Expert': 'Expert'
                 },
-                victoryTitle: 'YOU WIN',
+                victoryTitle: 'YOU WIN!',
                 victoryDifficulty: 'Difficulty:',
                 victoryTime: 'Time:',
                 victoryErrors: 'Errors:',
@@ -1882,38 +1883,33 @@
         function playVictorySound(startTime) {
             if (!audioCtx) initAudio();
             
-            // 更激勵人心的勝利音樂，使用和弦進行
             const victoryChords = [
-                { chord: [523.25, 659.25, 783.99], duration: 0.4 }, // C major
-                { chord: [587.33, 739.99, 880.00], duration: 0.4 }, // D minor
-                { chord: [659.25, 830.61, 987.77], duration: 0.4 }, // E minor
-                { chord: [698.46, 880.00, 1046.50], duration: 0.6 }, // F major
-                { chord: [783.99, 987.77, 1174.66], duration: 0.4 }, // G major
-                { chord: [880.00, 1046.50, 1318.51], duration: 0.4 }, // A minor
-                { chord: [987.77, 1174.66, 1480.00], duration: 0.4 }, // B diminished
-                { chord: [1046.50, 1318.51, 1567.98], duration: 0.8 }  // C major (高八度)
+                { chord: [523.25, 659.25, 783.99], duration: 0.4 },
+                { chord: [587.33, 739.99, 880.00], duration: 0.4 },
+                { chord: [659.25, 830.61, 987.77], duration: 0.4 },
+                { chord: [698.46, 880.00, 1046.50], duration: 0.6 },
+                { chord: [783.99, 987.77, 1174.66], duration: 0.4 },
+                { chord: [880.00, 1046.50, 1318.51], duration: 0.4 },
+                { chord: [987.77, 1174.66, 1480.00], duration: 0.4 },
+                { chord: [1046.50, 1318.51, 1567.98], duration: 0.8 }
             ];
             
-            // 先播放一段上行的音階作為前奏
             const introScale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
             introScale.forEach((freq, index) => {
                 const noteTime = startTime + index * 0.1;
                 playNote(freq, noteTime, 0.08);
             });
             
-            // 播放和弦進行
             victoryChords.forEach((chord, index) => {
                 const chordTime = startTime + 0.8 + index * 0.4;
                 playChord(chord.chord, chordTime, chord.duration);
                 
-                // 在每個和弦上添加一個高音旋律
                 if (index < victoryChords.length - 1) {
                     const melodyTime = chordTime + 0.2;
-                    playNote(chord.chord[2] * 2, melodyTime, 0.2); // 和弦的最高音
+                    playNote(chord.chord[2] * 2, melodyTime, 0.2);
                 }
             });
             
-            // 結尾的歡呼音效
             const finalTime = startTime + 0.8 + victoryChords.length * 0.4;
             for (let i = 0; i < 5; i++) {
                 const cheerTime = finalTime + i * 0.1;
@@ -1932,7 +1928,7 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 
-                oscillator.type = index === 0 ? 'sine' : 'triangle'; // 根音用sine，其他用triangle
+                oscillator.type = index === 0 ? 'sine' : 'triangle';
                 oscillator.frequency.setValueAtTime(freq, time);
                 
                 gainNode.gain.setValueAtTime(0.08, time);
@@ -1992,11 +1988,9 @@
         function applySettings() {
             soundEnabled = settings.soundEnabled;
             
-            // 移除所有主題類別，然後添加當前主題
             document.body.className = '';
             document.body.classList.add(`${settings.theme}-theme`);
             
-            // 更新主題選擇器
             document.getElementById('theme-select').value = settings.theme;
         }
 
@@ -2037,7 +2031,6 @@
                 closeBibleOverlay();
             });
             
-            // 計時器點擊事件
             document.getElementById('timer-display').addEventListener('click', handleTimerClick);
         }
 
@@ -2046,7 +2039,6 @@
                 hideSettings();
             });
             
-            // 設定變更時自動保存
             document.getElementById('sound-toggle').addEventListener('change', (e) => {
                 settings.soundEnabled = e.target.checked;
                 soundEnabled = settings.soundEnabled;
@@ -2110,7 +2102,6 @@
         function updateUIForLanguage() {
             const t = translations[settings.language];
             
-            // 更新難度選擇
             const difficultySelect = document.getElementById('difficulty');
             const currentDiff = difficultySelect.value;
             difficultySelect.innerHTML = '';
@@ -2125,32 +2116,26 @@
             
             difficultySelect.value = currentDiff;
             
-            // 更新按鈕文字
             document.getElementById('btn-new-game').textContent = t.newGame;
             document.getElementById('btn-notes').textContent = t.notesMode;
             document.getElementById('btn-hint').textContent = t.hint;
             document.getElementById('btn-settings').textContent = t.settings;
             
-            // 更新勝利畫面
             document.getElementById('victory-title').textContent = t.victoryTitle;
             document.getElementById('victory-ok-btn').textContent = t.victoryOK;
             
-            // 更新勝利畫面標題
             document.getElementById('victory-stat-difficulty').textContent = t.victoryDifficulty;
             document.getElementById('victory-stat-time').textContent = t.victoryTime;
             document.getElementById('victory-stat-errors').textContent = t.victoryErrors;
             document.getElementById('victory-stat-hints').textContent = t.victoryHints;
             
-            // 更新暫停畫面
             document.getElementById('pause-title').textContent = t.pauseTitle;
             document.getElementById('pause-text').textContent = t.pauseText;
             document.getElementById('resume-btn').textContent = t.resume;
             
-            // 更新聖經畫面
             document.getElementById('bible-title').textContent = t.bibleTitle;
             document.getElementById('close-bible-btn').textContent = t.closeBible;
             
-            // 更新設定畫面
             document.getElementById('settings-overlay').querySelector('h2').textContent = t.settingsTitle;
             document.getElementById('return-btn').textContent = t.returnGame;
             
@@ -2161,7 +2146,6 @@
                 settingLabels[2].textContent = t.theme;
             }
             
-            // 更新主題選項的翻譯
             const themeSelect = document.getElementById('theme-select');
             const currentTheme = themeSelect.value;
             themeSelect.innerHTML = '';
@@ -2176,9 +2160,7 @@
             
             themeSelect.value = currentTheme;
             
-            // 更新勝利畫面的難度顯示
             updateVictoryDifficulty();
-            
             updateStats();
         }
         
@@ -2229,7 +2211,7 @@
             updateBoardUI();
             updateCounts();
             updateHighlighting();
-            updateVictoryDifficulty(); // 更新勝利畫面的難度顯示
+            updateVictoryDifficulty();
             
             startTimer();
         }
@@ -2321,7 +2303,6 @@
             if (num === solution[r][c]) {
                 board[r][c] = num;
                 
-                // 添加漣漪效果
                 const ripple = document.createElement('div');
                 ripple.className = 'ripple';
                 ripple.style.width = '20px';
@@ -2335,11 +2316,9 @@
                     if (ripple.parentNode) cellDiv.removeChild(ripple);
                 }, 600);
                 
-                // 彈入效果
                 cellDiv.classList.add('pop-in');
                 setTimeout(() => cellDiv.classList.remove('pop-in'), 300);
                 
-                // 脈衝效果
                 cellDiv.classList.add('pulse');
                 setTimeout(() => cellDiv.classList.remove('pulse'), 1000);
                 
@@ -2351,9 +2330,8 @@
                 
                 isFreshGame = false;
             } else {
-                // 錯誤動畫 - 更新：添加數字抖動效果
                 cellDiv.classList.add('shake-error');
-                cellDiv.classList.add('shake-number'); // 新增數字抖動效果
+                cellDiv.classList.add('shake-number');
                 setTimeout(() => {
                     cellDiv.classList.remove('shake-error');
                     cellDiv.classList.remove('shake-number');
@@ -2885,11 +2863,10 @@
                 stopTimer();
                 playSound('win');
                 
-                // 勝利畫面資料更新
                 document.getElementById('victory-time').innerText = updateTimerDisplay();
                 document.getElementById('victory-errors').innerText = errorCount.toString().padStart(2, '0');
                 document.getElementById('victory-hints').innerText = hintCount.toString().padStart(2, '0');
-                updateVictoryDifficulty(); // 使用當前語言更新難度顯示
+                updateVictoryDifficulty();
                 
                 showVictoryScreen();
                 
@@ -2902,16 +2879,12 @@
         function showVictoryScreen() {
             document.getElementById('victory-overlay').style.display = 'flex';
             
-            // 啟動煙火效果 - 循環播放
             startVictoryFireworksLoop();
             
-            // 添加快樂的裝飾元素
             const modal = document.getElementById('victory-modal');
             
-            // 移除已有的裝飾元素
             document.querySelectorAll('.victory-decoration').forEach(el => el.remove());
             
-            // 添加新的快樂裝飾元素
             const decorations = ['🎉', '🎊', '🏆', '✨'];
             decorations.forEach((deco, index) => {
                 const decoEl = document.createElement('div');
@@ -2922,25 +2895,21 @@
             });
         }
 
-        // ========== 勝利畫面的煙花循環效果系統 ==========
         function startVictoryFireworksLoop() {
             const container = document.getElementById('fireworks-container');
             if (!container) return;
             
             container.innerHTML = '';
             
-            // 先發射一波煙花
             startHappyFireworks();
             
-            // 然後設置循環，每5秒發射一波煙花
             victoryFireworksInterval = setInterval(() => {
                 if (document.getElementById('victory-overlay').style.display === 'flex') {
                     startHappyFireworks();
                 } else {
-                    // 如果勝利畫面已關閉，則停止循環
                     stopVictoryFireworks();
                 }
-            }, 5000); // 每5秒發射一波
+            }, 5000);
         }
 
         function stopVictoryFireworks() {
@@ -2952,14 +2921,13 @@
             stopFireworks();
         }
 
-        // ========== 快樂的煙花效果系統 ==========
         function startHappyFireworks() {
             const container = document.getElementById('fireworks-container');
             if (!container) return;
             
             fireworksActive = true;
             
-            const fireworkCount = 20; // 每波煙花數量
+            const fireworkCount = 20;
             const colors = ['#FF6B35', '#FFCC00', '#4CAF50', '#3498DB', '#9B59B6', '#E74C3C', '#1ABC9C', '#F39C12'];
             
             let created = 0;
@@ -2972,7 +2940,7 @@
                 createRandomHappyFirework();
                 
                 created++;
-            }, 100); // 每0.1秒發射一個煙花
+            }, 100);
         }
 
         function createRandomHappyFirework() {
@@ -2988,7 +2956,6 @@
             const container = document.getElementById('fireworks-container');
             if (!container) return;
             
-            // 創建主煙花
             const firework = document.createElement('div');
             firework.className = 'happy-firework';
             firework.style.left = x + 'px';
@@ -2997,7 +2964,6 @@
             firework.style.boxShadow = `0 0 20px ${color}, 0 0 40px ${color}`;
             container.appendChild(firework);
             
-            // 煙花爆炸效果
             setTimeout(() => {
                 createSparkles(x, y - 100, color);
                 if (firework.parentNode) {
@@ -3019,7 +2985,6 @@
                 sparkle.style.top = y + 'px';
                 sparkle.style.backgroundColor = color;
                 
-                // 隨機方向
                 const angle = (i / sparkleCount) * Math.PI * 2;
                 const distance = 30 + Math.random() * 40;
                 const targetX = Math.cos(angle) * distance;
@@ -3028,7 +2993,6 @@
                 sparkle.style.transform = `translate(${targetX}px, ${targetY}px)`;
                 container.appendChild(sparkle);
                 
-                // 移除火花
                 setTimeout(() => {
                     if (sparkle.parentNode) {
                         container.removeChild(sparkle);
