@@ -569,6 +569,7 @@
             position: relative;
             user-select: none;
             transition: background-color 0.2s ease, color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .cell.clue, .cell.filled {
@@ -682,6 +683,9 @@
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            touch-action: manipulation;
         }
 
         .numpad-btn:active {
@@ -1986,6 +1990,84 @@
             });
             
             document.getElementById('timer-display').addEventListener('click', handleTimerClick);
+            
+            // 為所有按鈕添加觸摸事件支援
+            setupTouchEvents();
+        }
+
+        function setupTouchEvents() {
+            // 為數值按鈕添加觸摸事件
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`btn-num-${i}`);
+                if (btn) {
+                    btn.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        this.style.transform = 'translateY(-2px)';
+                        this.style.boxShadow = '0 4px 8px var(--shadow)';
+                        this.style.background = 'var(--primary)';
+                        this.style.borderColor = 'transparent';
+                        this.querySelector('.num').style.color = 'white';
+                        this.querySelector('.num').style.transform = 'scale(1.05)';
+                        this.querySelector('.count').style.color = 'rgba(255, 255, 255, 0.8)';
+                    }, {passive: false});
+                    
+                    btn.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                        this.style.background = '';
+                        this.style.borderColor = '';
+                        this.querySelector('.num').style.color = '';
+                        this.querySelector('.num').style.transform = '';
+                        this.querySelector('.count').style.color = '';
+                        
+                        // 觸發點擊事件
+                        handleInput(i);
+                    }, {passive: false});
+                    
+                    btn.addEventListener('touchcancel', function(e) {
+                        e.preventDefault();
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                        this.style.background = '';
+                        this.style.borderColor = '';
+                        this.querySelector('.num').style.color = '';
+                        this.querySelector('.num').style.transform = '';
+                        this.querySelector('.count').style.color = '';
+                    }, {passive: false});
+                }
+            }
+            
+            // 為其他按鈕添加觸摸事件
+            const buttons = document.querySelectorAll('.text-btn, .modal-btn, .return-btn, .victory-new-game-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'translateY(-2px)';
+                }, {passive: false});
+                
+                btn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.style.transform = '';
+                    // 觸發點擊事件
+                    this.click();
+                }, {passive: false});
+                
+                btn.addEventListener('touchcancel', function(e) {
+                    e.preventDefault();
+                    this.style.transform = '';
+                }, {passive: false});
+            });
+            
+            // 為單元格添加觸摸事件
+            document.getElementById('sudoku-board').addEventListener('touchstart', function(e) {
+                if (e.target.classList.contains('cell')) {
+                    e.preventDefault();
+                    const r = parseInt(e.target.dataset.r);
+                    const c = parseInt(e.target.dataset.c);
+                    selectCell(r, c);
+                }
+            }, {passive: false});
         }
 
         function setupSettingsEvents() {
@@ -2226,7 +2308,10 @@
                 btn.className = 'numpad-btn';
                 btn.id = `btn-num-${i}`;
                 btn.innerHTML = `<div class="num">${i}</div><div class="count">9</div>`;
+                
+                // 點擊事件（用於電腦）
                 btn.addEventListener('click', () => handleInput(i));
+                
                 keypad.appendChild(btn);
             }
         }
